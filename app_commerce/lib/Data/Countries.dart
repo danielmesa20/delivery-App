@@ -1,4 +1,4 @@
-enum List_Countries { Colombia, Venezuela }
+enum List_Countries { Colombia, Venezuela, Chile }
 
 enum List_Categories { Restaurante, Supermarket, Drinks, Farmacy }
 

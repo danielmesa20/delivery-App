@@ -3,23 +3,23 @@ const Comment = require("../models/Comment");
 const Cloudinary = require("../config/cloudinary");
 const fs = require('fs-extra');
 
-//Get all products
+//Get all products (Commerce)
 exports.allProducts = async (req, res) => {
     try {
         const products = await Product.find().select('-description');;
         return res.status(200).json({ err: null, products });
     } catch (err) {
-        return res.status(400).json({ err: null });
+        return res.status(400).json({ err });
     }
 };
 
-//Get user products
-exports.userProducts = async (req, res) => {
+//Get commerce products
+exports.commerceProducts = async (req, res) => {
     try {
-        const products = await Product.find({ user_id: req.params.idUser });
+        const products = await Product.find({ id_commerce: req.params.id_commerce });
         return res.status(200).json({ err: null, products });
     } catch (err) {
-        return res.status(400).json({ err: null });
+        return res.status(400).json({ err });
     }
 };
 
@@ -30,7 +30,7 @@ exports.newProduct = async (req, res) => {
     try {
         //Upload image to Cloudinary
         const result = await Cloudinary.v2.uploader.upload(req.file.path);
-        const product = await newProduct.save();
+        
         //New Product Object
         const newProduct = new Product({
             name,
@@ -41,11 +41,14 @@ exports.newProduct = async (req, res) => {
             public_id: result.public_id,
             commerce_id
         });
-        await fs.unlink(req.file.path);
-        return res.status(200).json(product);
+        //Save product in MongoDB
+        const product = await newProduct.save();
+        //Delete image 
+        fs.unlinkSync(req.file.path);
+        return res.status(200).json({err: null, product});
     } catch (err) {
         console.log("Error add: ", err);
-        return res.status(400).json({ err });
+        return res.status(400).json({ err: 'Error add product' });
     }
 };
 

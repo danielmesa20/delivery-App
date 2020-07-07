@@ -9,13 +9,13 @@ bool validateEmail(String email) {
 }
 
 // Function Show SnackBar
-showSnackBar(String text, Color backgroundColor) {
+showSnackBar(String text, Color color) {
   return SnackBar(
     content: Text(
       text,
       textAlign: TextAlign.center,
     ),
-    backgroundColor: backgroundColor
+    backgroundColor: color
   );
 }
 
@@ -28,3 +28,30 @@ changeScreen(context, Widget newScreen) {
     ),
   );
 }
+
+//Show Dialog Loader
+void onLoading(context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          children: [
+            Center(
+              child: Column(children: [
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Please Wait....",
+                  style: TextStyle(color: Colors.blueAccent),
+                )
+              ]),
+            ),
+          ],
+        );
+      },
+    );
+  }
+

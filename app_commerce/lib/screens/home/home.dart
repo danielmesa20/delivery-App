@@ -1,4 +1,4 @@
-import 'package:brew_crew/screens/authenticate/sign_in_email.dart';
+import 'package:brew_crew/screens/authenticate/tab_auth.dart';
 import 'package:brew_crew/screens/products/add_product.dart';
 import 'package:brew_crew/screens/products/image_capture.dart';
 import 'package:brew_crew/services/auth.dart';
@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
                   ],
               onSelected: (value) async {
                 await _auth.signOut();
-                changeScreen(context, SignInWithEmail());
+                changeScreen(context, TabAuth());
               }),
         ],
       ),

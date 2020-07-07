@@ -1,14 +1,16 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:async/async.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
+
+  String local = 'http://192.168.250.5:4000';
+
   //Add New Product
   Future addProduct(Map product) async {
     //URL API
-    var url = Uri.parse('http://192.168.250.7:4000/products/add');
+    var url = Uri.parse('$local/products/add');
 
     //API response
     var request = http.MultipartRequest('POST', url);
@@ -37,53 +39,36 @@ class DatabaseService {
     await request.send().then((response) async {
       // listen for response
       response.stream.transform(utf8.decoder).listen((value) {
-        print(value);
         return null;
       });
     }).catchError((e) {
-      print(e);
-      return null;
+       return e;
     });
   }
-}
 
-//Add New Product
-Future addProductV2(Map product) async {
+//Get Commerce Products
+  Future getProducts(Map product) async {
+    //Get id commerce
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
-  //New DIO Object
-  Dio dio = new Dio();
+    //Send id commerce
+    Map parameters = {
+      'id_commerce': sharedPreferences.getString("commerce_id")
+    };
 
-  //URL API
-  var url = 'http://192.168.250.7:4000/products/add';
+    //URL API
+    String url = 'http://192.168.250.3:4000';
 
-  //New FormData Object
-  FormData formData = FormData.fromMap(<String, dynamic>{
-    "name": product['name'],
-    "price": product['price'],
-    "description": product['description'],
-    "available": product['available'],
-    "commerce_id": product['commerce_id'],
-    "myImage": await MultipartFile.fromFile(product['image'], filename: basename(product["image"].path))
-  });
+    //Add parameters
+    var uri = Uri.http(url, '/products/add', parameters);
 
-  //.path
+    //API response
+    var response = await http.get(uri);
 
-  //API response
-  var response = await dio.post(url,
-      data: formData,
-      options: Options(
-          method: 'POST',
-          responseType: ResponseType.json 
-  ));
+    //JSON to Map
+    var data = jsonDecode(response.body);
 
-  print("Data v1" + response.data);
-  var data = json.decode(response.data.toString());
-  print("Data v2" + data);
-
-  if(data['err'] == null){
-    return null;
+    return data;
   }
-
-  return data['err'] ;
 
 }

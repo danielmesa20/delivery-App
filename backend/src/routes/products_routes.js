@@ -10,7 +10,7 @@ router.post('/add', productController.newProduct);
 router.get('/findAll', productController.allProducts);
 
 //Find User Products
-router.get('/userProducts/:idUser', verifyToken, productController.userProducts);
+router.get('/userProducts/:idUser', verifyToken, productController.commerceProducts);
 
 //Delete One Product
 router.delete('/delete/:idProduct', verifyToken, productController.deleteProduct);

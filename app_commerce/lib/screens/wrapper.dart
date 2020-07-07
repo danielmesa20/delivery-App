@@ -1,4 +1,4 @@
-import 'package:brew_crew/screens/authenticate/sign_in_email.dart';
+import 'package:brew_crew/screens/authenticate/tab_auth.dart';
 import 'package:brew_crew/screens/home/home.dart';
 import 'package:brew_crew/shared/Loading.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _WrapperState extends State<Wrapper> {
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if (sharedPreferences.getString("token") == null) {
-      changeScreen(context, SignInWithEmail());
+      changeScreen(context, TabAuth());
     }else{
       changeScreen(context, Home());
     }

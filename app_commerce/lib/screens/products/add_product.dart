@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:brew_crew/screens/products/image_capture.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:brew_crew/shared/Constants.dart';
-import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class AddProduct extends StatefulWidget {
   AddProduct({Key key}) : super(key: key);
@@ -31,17 +31,17 @@ class _AddProductState extends State<AddProduct> {
       setState(() => _loading = true);
 
       //New Product data
-      Map<String, dynamic> product = {
+      Map product = {
         'name': _nameC.text,
         'description': _descriptionC.text,
-        'price': double.parse(_priceC.text),
+        'price': _priceC.text,
         'image': _image,
-        'available': _isAvailable,
+        'available': _isAvailable.toString(),
         'commerce_id': 'test_id',
       };
 
       //API result
-      dynamic result = await _database.addProduct(product);
+      var result = await _database.addProduct(product);
 
       //Hidden LinearProgressIndicator
       setState(() => _loading = false);
@@ -55,7 +55,7 @@ class _AddProductState extends State<AddProduct> {
         clearForm();
         //Show the snackbar with the message
         _scaffoldKey.currentState.showSnackBar(
-            showSnackBar('Registration completed.', Colors.green));
+            showSnackBar('Add Product completed.', Colors.green[500]));
       }
     } else {
       _scaffoldKey.currentState
@@ -168,35 +168,6 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.0),
-                      CustomButton(
-                        backgroundColor: Colors.blue,
-                        text: "Add an image",
-                        textColor: Colors.white,
-                        actionOnpressed: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ImageCapture(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              _image = result;
-                            });
-                          }
-                        },
-                      ),
-                      CustomButton(
-                        backgroundColor: Colors.pink,
-                        text: "Enter",
-                        textColor: Colors.white,
-                        actionOnpressed: () {
-                          if (_formKey.currentState.validate()) {
-                            createProduct();
-                          }
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -204,6 +175,42 @@ class _AddProductState extends State<AddProduct> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: IconThemeData(size: 22.0),
+        curve: Curves.bounceIn,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        tooltip: 'Speed Dial',
+        heroTag: 'speed-dial-hero-tag',
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 8.0,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.camera_alt),
+            backgroundColor: Colors.green[800],
+            label: 'Enter',
+            onTap: () => {
+              _formKey.currentState.validate() == true ? createProduct() : null
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.photo),
+            backgroundColor: Colors.green,
+            label: 'Add Product Image',
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageCapture(),
+                ),
+              );
+              if (result != null) setState(() => _image = result);
+            },
+          )
+        ],
       ),
     );
   }
