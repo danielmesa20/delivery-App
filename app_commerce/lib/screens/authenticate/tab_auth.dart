@@ -13,29 +13,30 @@ class _TabAuthState extends State<TabAuth> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.greenAccent,
-        appBar: AppBar(
-          bottom: TabBar(
+    return SafeArea(
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Color.fromRGBO(2, 128, 144, 1),
+          appBar: TabBar(
+            labelColor: Color.fromRGBO(240, 243, 189, 1),
+            labelStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.25,
+              fontSize: 17,
+            ),
+            indicatorColor: Color.fromRGBO(0, 168, 150, 100),
+            unselectedLabelColor: Colors.white,
             tabs: [
-              Tab(
-                text: "SignIn",
-              ),
-              Tab(
-                text: "SignUp",
-              ),
+              Tab(text: "SignIn"),
+              Tab(text: "SignUp"),
             ],
           ),
-          title: Text('App Delivery Commerce Alpha'),
-          centerTitle: true,
-          elevation: 0.0,
-        ),
-        body: TabBarView(
-          children: [SignInWithEmail(_scaffoldKey), Register(_scaffoldKey)],
+          body: TabBarView(
+            children: [SignInWithEmail(_scaffoldKey), Register(_scaffoldKey)],
+          ),
         ),
       ),
     );

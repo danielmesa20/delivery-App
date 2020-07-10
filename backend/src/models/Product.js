@@ -1,9 +1,14 @@
 const { Schema, model } = require('mongoose');
+var mongoose = require('mongoose');
+const mongooseDouble = require('mongoose-double');
+require('mongoose-double')(mongoose);
+
+var SchemaTypes = mongoose.Schema.Types;
 
 const ProductSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: String, required: true },
     available: { type: Boolean, required: true },
     imageURL: { type: String, required: true },
     public_id: { type: String, required: true },

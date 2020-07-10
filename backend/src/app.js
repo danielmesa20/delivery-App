@@ -1,6 +1,5 @@
 const express = require('express');
 const morgan = require('morgan'); 
-const passport = require("passport");
 const session = require('express-session');
 const cors = require('cors');
 const multer = require('multer');
@@ -12,9 +11,6 @@ const app = express();
 
 //Connect two servers
 app.use(cors())
-
-//Email and Password auth
-require('./passport/local_auth');
 
 // Settings
 app.set('port', process.env.PORT || 4000);
@@ -40,8 +36,6 @@ app.use(session({
     saveUninitialized: false,
     resave: false
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 //Global Variables
 app.use((req, res, next) => {

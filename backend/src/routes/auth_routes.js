@@ -3,11 +3,11 @@ const router = express.Router();
 const authController = require("../controllers/auth_controller");
 const verifyToken = require('../config/token');
 
-//SignIn
-router.post('/signin', authController.signIn);
+//SignUp Commerce
+router.post('/signincommerce', authController.signInCommerce);
 
-//SignUp
-router.post('/signup', authController.signUp);
+//SignIn Commerce
+router.post('/signupcommerce', authController.signUpCommerce);
 
 //Logout
 router.get('/logout', verifyToken, authController.logout);

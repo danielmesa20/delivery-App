@@ -4,16 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
 
-   String local = 'http://192.168.250.5:4000';
+   String local = 'http://192.168.250.7:4000';
 
-  // Register
-  Future registerNewUser(Map user) async {
+  // SignUp
+  Future signUp(Map commerce) async {
     
     //URL API
-    String url = '$local/auth/signup';
+    String url = '$local/auth/signupcommerce';
 
     //API response
-    var response = await http.post(url, body: user);
+    var response = await http.post(url, body: commerce);
 
     //JSON to Map
     var data = jsonDecode(response.body);
@@ -27,14 +27,14 @@ class AuthService {
 
   // Sign in with email & password
   Future signIn(String email, String password) async {
-    //Data User
-    Map user = {'email': email, 'password': password};
+    //Commerce credentials 
+    Map credentials = {'email': email, 'password': password};
 
     //API URL
-    String url = "$local/auth/signin";
+    String url = "$local/auth/signincommerce";
 
     //API response
-    var response = await http.post(url, body: user);
+    var response = await http.post(url, body: credentials);
 
     //JSON to Map
     var data = jsonDecode(response.body);
@@ -47,9 +47,9 @@ class AuthService {
 
       //Save credentials with SharedPreferences
       sharedPreferences.setString("token", data["token"]);
-      sharedPreferences.setString("commerce_id", data["user_id"]);
-      sharedPreferences.setString("commerce_name", data["user_name"]);
-      sharedPreferences.setString("commerce_email", data["user_email"]);
+      sharedPreferences.setString("commerce_id", data["id"]);
+      sharedPreferences.setString("commerce_name", data["name"]);
+      sharedPreferences.setString("commerce_email", data["email"]);
 
       //Return dont error
       return null;
@@ -60,7 +60,9 @@ class AuthService {
   }
 
   // Password reset
-  Future resetPassword(String email) async {}
+  Future resetPassword(String email) async {
+
+  }
 
   // Sign out
   Future signOut() async {

@@ -11,12 +11,11 @@ bool validateEmail(String email) {
 // Function Show SnackBar
 showSnackBar(String text, Color color) {
   return SnackBar(
-    content: Text(
-      text,
-      textAlign: TextAlign.center,
-    ),
-    backgroundColor: color
-  );
+      content: Text(
+        text,
+        textAlign: TextAlign.center,
+      ),
+      backgroundColor: color);
 }
 
 // Go to Login Screen
@@ -31,27 +30,29 @@ changeScreen(context, Widget newScreen) {
 
 //Show Dialog Loader
 void onLoading(context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          children: [
-            Center(
-              child: Column(children: [
-                CircularProgressIndicator(),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "Please Wait....",
-                  style: TextStyle(color: Colors.blueAccent),
-                )
-              ]),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        backgroundColor: Color.fromRGBO(2, 128, 144, 1),
+        children: [
+          Center(
+            child: Column(children: [
+              CircularProgressIndicator(
+                backgroundColor: Color.fromRGBO(0, 168, 150, 1),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Please Wait....",
+                style: TextStyle(color: Colors.white),
+              )
+            ]),
+          ),
+        ],
+      );
+    },
+  );
+}

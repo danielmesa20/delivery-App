@@ -1,76 +1,79 @@
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 const User = require("../models/User");
+const Commerce = require('../models/Commerce');
 
-//Register User
-exports.signUp = async (req, res, next) => {
-    passport.authenticate('local-signup', (err, user) => {
-        if (!err) {
-            return res.status(200).json({ err: null });
+//SignUp Commerce
+exports.signUpCommerce = async (req, res) => {
+
+    const { email, password, category, country, state, name } = req.body;
+
+    try {
+        //Check email use
+        const commerce = await Commerce.findOne({ email });
+
+        if (!commerce) {
+            const newCommerce = new Commerce({
+                name,
+                email,
+                password,
+                category,
+                country,
+                state
+            });
+            newCommerce.password = await newCommerce.encryptPassword(password);
+            try {
+                await newCommerce.save();
+                return res.status(200).json({ err: null });
+            } catch (err) {
+                return res.status(400).json({ err });
+            }
         }
+        return res.status(400).json({ err: 'Email already used' });
+        
+    } catch (err) {
         console.log("Error signup: ", err);
         return res.status(400).json({ err });
-
-    })(req, res, next);
+    }
 };
 
-//Register Commer
-exports.signUpCommerce = async (req, res, next) => {
-    passport.authenticate('local-signup', (err, user) => {
-        if (!err) {
-            return res.status(200).json({ err: null });
-        }
-        console.log("Error signup: ", err);
-        return res.status(400).json({ err });
+//SignIn Commmerce
+exports.signInCommerce = async (req, res) => {
 
-    })(req, res, next);
-};
+    const { email, password } = req.body;
 
-//Login
-exports.signIn = async (req, res, next) => {
-    passport.authenticate('local-signin', (err, user) => {
-        if (!err) {
-            const token = jwt.sign({ id: user._id },
-                process.env.SECRET, {
-                expiresIn: '24h'
-            });
-            return res.status(200).json({
-                err: null,
-                token,
-                user_id: user._id,
-                user_name: user.username,
-                email: user.email
-            });
+    try {
+        //Find if exist that email
+        const commerce = await Commerce.findOne({ email });
+
+        //Exist email
+        if (commerce) {
+             //Check password
+            if (commerce.validatePassword(password)) {
+                const token = jwt.sign({ id: commerce._id },
+                    process.env.SECRET, {
+                    expiresIn: '24h'
+                });
+                return res.status(200).json({
+                    err: null,
+                    token,
+                    id: commerce._id,
+                    name: commerce.name,
+                    email: commerce.email
+                });
+            }
+            return res.status(400).json({ err: 'Wrong password' });
         }
+        
+        //Dont exist email
+        return res.status(400).json({ err: 'Unregistered email' });
+
+    } catch (err) {
         console.log("Error signIn: ", err);
         return res.status(400).json({ err });
-
-    })(req, res, next);
+    }
 };
 
-//Login Commmerce
-exports.signInCommerce = async (req, res, next) => {
-    passport.authenticate('local-signin', (err, user) => {
-        if (!err) {
-            const token = jwt.sign({ id: user._id },
-                process.env.SECRET, {
-                expiresIn: '24h'
-            });
-            return res.status(200).json({
-                err: null,
-                token,
-                user: {
-                    id: user._id,
-                    username: user.username,
-                    email: user.email
-                }
-            });
-        }
-        console.log("Error signIn: ", err);
-        return res.status(400).json({ err });
 
-    })(req, res, next);
-};
 
 //Get user data
 exports.userData = async (req, res, next) => {

@@ -2,8 +2,9 @@ const Product = require("../models/Product");
 const Comment = require("../models/Comment");
 const Cloudinary = require("../config/cloudinary");
 const fs = require('fs-extra');
+const { Model } = require("mongoose");
 
-//Get all products (Commerce)
+//Get all products (DELETE)
 exports.allProducts = async (req, res) => {
     try {
         const products = await Product.find().select('-description');;
@@ -16,7 +17,7 @@ exports.allProducts = async (req, res) => {
 //Get commerce products
 exports.commerceProducts = async (req, res) => {
     try {
-        const products = await Product.find({ id_commerce: req.params.id_commerce });
+        const products = await Product.find({ commerce_id: req.params.id });
         return res.status(200).json({ err: null, products });
     } catch (err) {
         return res.status(400).json({ err });
@@ -30,7 +31,7 @@ exports.newProduct = async (req, res) => {
     try {
         //Upload image to Cloudinary
         const result = await Cloudinary.v2.uploader.upload(req.file.path);
-        
+
         //New Product Object
         const newProduct = new Product({
             name,
@@ -45,12 +46,58 @@ exports.newProduct = async (req, res) => {
         const product = await newProduct.save();
         //Delete image 
         fs.unlinkSync(req.file.path);
-        return res.status(200).json({err: null, product});
+        return res.status(200).json({ err: null, product });
     } catch (err) {
         console.log("Error add: ", err);
         return res.status(400).json({ err: 'Error add product' });
     }
 };
+
+//Update one product
+exports.updateProduct = async (req, res) => {
+
+    let { name, description, price, available, imageURL, commerce_id, public_id, id } = req.body;
+
+    if (req.file !== undefined) {
+        try {
+            //Delete old image of product in Cloudinary
+            await Cloudinary.v2.uploader.destroy(public_id);
+            //Upload new image to Cloudinary
+            const result = await Cloudinary.v2.uploader.upload(req.file.path);
+            //Update imageURL and public_id
+            imageURL = result.url;
+            public_id = result.public_id;
+        } catch (error) {
+            console.log("err update cloudinary ", err);
+            return res.status(400).json({ err });
+        }
+    }
+
+    try {
+        const product = await Product.findByIdAndUpdate(
+            { _id: id },
+            {
+                name,
+                description,
+                price,
+                available,
+                imageURL,
+                public_id,
+                commerce_id
+            },
+            {
+                new: true,
+                upsert: true
+            });
+        //Delete image in backend
+        fs.unlinkSync(req.file.path);
+        return res.status(200).json({ err: null, product });
+
+    } catch (err) {
+        console.log("err update ", err);
+        return res.status(400).json({ err });
+    }
+}
 
 //Delete One product
 exports.deleteProduct = async (req, res) => {
@@ -85,43 +132,6 @@ exports.findOne = async (req, res) => {
     }
 }
 
-//Update one product
-exports.updateProduct = async (req, res) => {
-
-    let { name, description, category, price, stock, imageURL, public_id } = req.body;
-
-    if (req.file !== undefined) {
-        //Delete old image of product
-        await Cloudinary.v2.uploader.destroy(public_id);
-        //Upload new image to Cloudinary
-        const result = await Cloudinary.v2.uploader.upload(req.file.path);
-        //Update imageURL and public_id
-        imageURL = result.url;
-        public_id = result.public_id;
-    }
-
-    try {
-        const product = await Product.findByIdAndUpdate(
-            { _id: req.params.idProduct },
-            {
-                name,
-                description,
-                category,
-                price,
-                stock,
-                imageURL,
-                public_id
-            },
-            {
-                new: true,
-                upsert: true
-            });
-        return res.status(200).json({ err: null, product });
-
-    } catch (err) {
-        return res.status(400).json({ err });
-    }
-}
 
 //Add comment
 exports.addComment = async (req, res) => {

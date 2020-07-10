@@ -40,7 +40,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
     } else {
       //Hidden Keyboard
       SystemChannels.textInput.invokeMethod('TextInput.hide');
-      
+
       //Show Error message
       widget.scaffoldKey.currentState
           .showSnackBar(showSnackBar(result, Colors.red));
@@ -72,16 +72,20 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                       "SIGN IN WITH EMAIL",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 35.0,
-                        fontFamily: 'Prima',
-                        letterSpacing: 1.5,
-                      ),
+                          fontSize: 35.0,
+                          fontFamily: 'Prima',
+                          letterSpacing: 1.5,
+                          color: Color.fromRGBO(240, 243, 189, 1)),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
                       controller: _emailC,
                       keyboardType: TextInputType.emailAddress,
                       textAlignVertical: TextAlignVertical.bottom,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        letterSpacing: 1.25,
+                      ),
                       decoration:
                           inputDecoration('Enter Your Email Here', Icons.email),
                       validator: (val) {
@@ -97,6 +101,10 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                     TextFormField(
                       controller: _passwordC,
                       textAlignVertical: TextAlignVertical.bottom,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        letterSpacing: 1.25,
+                      ),
                       decoration: inputDecoration(
                         'Enter Your Password Here',
                         Icons.security,
@@ -121,19 +129,17 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                     ),
                     SizedBox(height: 20.0),
                     CustomButton(
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Color.fromRGBO(0, 168, 150, 1),
                       text: "Enter",
                       textColor: Colors.white,
                       actionOnpressed: () {
-                        if (_formKey.currentState.validate()) {
-                          signIn();
-                        }
+                        if (_formKey.currentState.validate()) signIn();
                       },
                     ),
                     CustomButton(
                       backgroundColor: Colors.transparent,
                       text: "I forgot my password",
-                      textColor: Colors.white,
+                      textColor: Colors.black,
                       actionOnpressed: () async {
                         if (_emailC.text == '' ||
                             _emailC.text == null ||

@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:math';
+
+import 'package:brew_crew/models/Product.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
@@ -8,14 +10,14 @@ import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddProduct extends StatefulWidget {
-  AddProduct({Key key}) : super(key: key);
-
+class UpdateProduct extends StatefulWidget {
+  final Product product;
+  UpdateProduct({this.product});
   @override
-  _AddProductState createState() => _AddProductState();
+  _UpdateProductState createState() => _UpdateProductState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _UpdateProductState extends State<UpdateProduct> {
   //Variables
   final _database = DatabaseService();
   final _formKey = GlobalKey<FormState>();
@@ -23,11 +25,33 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController _nameC = new TextEditingController();
   TextEditingController _descriptionC = new TextEditingController();
   TextEditingController _priceC = new TextEditingController();
-  bool _isAvailable = false;
+  bool _isAvailable;
   File _image;
 
-  //Create Product
-  createProduct() async {
+  @override
+  void initState() {
+    super.initState();
+    getValues();
+  }
+
+  getValues() async {
+    setState(() {
+      _nameC.text = widget.product.name;
+      _priceC.text = widget.product.price.toString();
+      _descriptionC.text = widget.product.description;
+      _isAvailable = widget.product.available;
+    });
+  }
+
+//Get photo from gallery
+  Future<void> getImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: source);
+    if (pickedFile != null) setState(() => _image = File(pickedFile.path));
+  }
+
+//Update product
+  updateProduct() async {
     //Show Dialog
     onLoading(context);
 
@@ -36,12 +60,16 @@ class _AddProductState extends State<AddProduct> {
       'name': _nameC.text,
       'description': _descriptionC.text,
       'price': _priceC.text,
+      'available': _isAvailable.toString(),
       'image': _image,
-      'available': _isAvailable.toString()
+      'id': widget.product.id,
+      'imageURL': widget.product.imageURL,
+      'public_id': widget.product.publicId,
+      'commerce_id': widget.product.commerceId
     };
 
     //API result
-    var result = await _database.addProduct(product);
+    var result = await _database.updateProduct(product);
 
     //Pop Dialog
     Navigator.pop(context);
@@ -51,15 +79,8 @@ class _AddProductState extends State<AddProduct> {
       _scaffoldKey.currentState.showSnackBar(showSnackBar(result, Colors.red));
     } else {
       //Go to List Products screen
-      Navigator.pop(context, 'Add Product completed.');
+      Navigator.pop(context, 'Update Product completed.');
     }
-  }
-
-  //Get photo from gallery
-  Future<void> getImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: source);
-    if (pickedFile != null) setState(() => _image = File(pickedFile.path));
   }
 
   // Clean controllers
@@ -88,7 +109,7 @@ class _AddProductState extends State<AddProduct> {
                     children: <Widget>[
                       SizedBox(height: 20.0),
                       Text(
-                        "Add Product",
+                        "Update Product",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 30.0,
@@ -126,7 +147,7 @@ class _AddProductState extends State<AddProduct> {
                                   },
                                 ),
                                 backgroundImage: _image == null
-                                    ? AssetImage("assets/imagedontfound.png")
+                                    ? NetworkImage(widget.product.imageURL)
                                     : FileImage(_image),
                               ),
                             );
@@ -209,31 +230,24 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 20.0),
                       CustomButton(
                         backgroundColor: Color.fromRGBO(0, 168, 150, 1),
-                        text: "SAVE",
+                        text: "UPDATE",
                         textColor: Colors.white,
                         actionOnpressed: () async {
                           if (_formKey.currentState.validate()) {
-                            if (_image != null) {
-                              final result = await showDialog<int>(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return CustomAlertDialog(
-                                      text: 'Are you sure you want to create the' +
-                                          'product with those characteristics?');
-                                },
-                              );
-                              //Answer yes in the AlertDialog
-                              if (result == 1) createProduct();
-                            } else {
-                              _scaffoldKey.currentState
-                                  .showSnackBar(showSnackBar(
-                                'Dont Image Selected',
-                                Colors.red,
-                              ));
-                            }
+                            final result = await showDialog<int>(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                    text: 'Are you sure you want to update the' +
+                                        'product with those characteristics?');
+                              },
+                            );
+                            //Answer yes in the AlertDialog
+                            if (result == 1) updateProduct();
                           }
                         },
                       ),

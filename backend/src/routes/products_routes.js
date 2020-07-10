@@ -6,20 +6,20 @@ const verifyToken = require('../config/token');
 //Add New Product
 router.post('/add', productController.newProduct);
 
-//Find All Products
-router.get('/findAll', productController.allProducts);
+//Update One Product
+router.put('/update', productController.updateProduct);
 
-//Find User Products
-router.get('/userProducts/:idUser', verifyToken, productController.commerceProducts);
+//Find Commerce Products
+router.get('/commerceProducts/:id', productController.commerceProducts);
 
 //Delete One Product
-router.delete('/delete/:idProduct', verifyToken, productController.deleteProduct);
+router.delete('/delete/:idProduct', productController.deleteProduct);
+
+//Find All Products (DELETE)
+router.get('/findAll', productController.allProducts);
 
 //Find One Product
 router.get('/findOne/:idProduct', productController.findOne);
-
-//Update One Product
-router.put('/update/:idProduct', verifyToken, productController.updateProduct);
 
 //Add comment
 router.post('/addComment', verifyToken, productController.addComment);

@@ -57,17 +57,17 @@ class _RegisterState extends State<Register> {
     onLoading(context);
 
     //New Commerce data
-    Map user = {
+    Map commerce = {
       'email': _emailC.text,
       'password': _passwordC.text,
       'category': _category,
       'country': _country,
       'state': _state,
-      'username': _nameC.text
+      'name': _nameC.text
     };
 
     //API result
-    dynamic result = await _auth.registerNewUser(user);
+    dynamic result = await _auth.signUp(commerce);
 
     //Pop Dialog
     Navigator.pop(context);
@@ -90,15 +90,27 @@ class _RegisterState extends State<Register> {
   }
 
   //Change State Select Options
-  /*changeListState(String nameSelect) {
-    setState(() {
-      if (nameSelect == 'Venezuela') {
-        _states = EnumToString.toList(List_State_Venezuela.values);
-      } else {
-        _states = EnumToString.toList(List_State_Colombia.values);
+  changeListState(String nameSelect) {
+    List<DropdownMenuItem> aux = [];
+    if (nameSelect == 'Venezuela') {
+      for (final element in EnumToString.toList(List_State_Venezuela.values)) {
+        aux.add(DropdownMenuItem(
+          child: Text(element),
+          value: element,
+        ));
       }
+    } else {
+      for (final element in EnumToString.toList(List_State_Colombia.values)) {
+        aux.add(DropdownMenuItem(
+          child: Text(element),
+          value: element,
+        ));
+      }
+    }
+    setState(() {
+      _states = aux;
     });
-  }*/
+  }
 
   //Clear Form
   clearForm() {
@@ -133,10 +145,10 @@ class _RegisterState extends State<Register> {
                       "Register Your Commerce",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 30.0,
-                        fontFamily: 'Prima',
-                        letterSpacing: 1.5,
-                      ),
+                          fontSize: 30.0,
+                          fontFamily: 'Prima',
+                          letterSpacing: 1.5,
+                          color: Color.fromRGBO(240, 243, 189, 1)),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -147,6 +159,8 @@ class _RegisterState extends State<Register> {
                         'Enter Your Email Here',
                         Icons.email,
                       ),
+                      style:
+                          TextStyle(color: Colors.white70, letterSpacing: 1.25),
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter an email';
@@ -160,6 +174,8 @@ class _RegisterState extends State<Register> {
                     TextFormField(
                       controller: _passwordC,
                       textAlignVertical: TextAlignVertical.bottom,
+                      style:
+                          TextStyle(color: Colors.white70, letterSpacing: 1.25),
                       decoration: inputDecoration(
                         'Enter Your Password Here',
                         Icons.security,
@@ -188,7 +204,13 @@ class _RegisterState extends State<Register> {
                     TextFormField(
                       controller: _nameC,
                       textAlignVertical: TextAlignVertical.bottom,
-                      decoration: inputDecoration('Enter Your Name Here'),
+                      decoration: inputDecoration(
+                        'Enter Your Name Here',
+                      ),
+                      style: TextStyle(
+                        color: Colors.white70,
+                        letterSpacing: 1.25,
+                      ),
                       validator: (val) {
                         if (val.isEmpty) return 'Enter an name';
                         return null;
@@ -200,13 +222,16 @@ class _RegisterState extends State<Register> {
                       value: _category,
                       hint: "Select one Category",
                       searchHint: "Categories",
+                      isExpanded: true,
+                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
                       onChanged: (value) {
                         setState(() => _category = value);
                       },
-                      isExpanded: true,
                       style: TextStyle(
-                        letterSpacing: 1.5,
-                      ),
+                          letterSpacing: 1.25,
+                          color: Colors.white70,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 17),
                       onClear: () {
                         setState(() => _category = '');
                       },
@@ -217,48 +242,51 @@ class _RegisterState extends State<Register> {
                       value: _country,
                       hint: "Select one Country",
                       searchHint: "Countries",
+                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
                       onChanged: (value) {
                         setState(() => _country = value);
+                        changeListState(_country);
                       },
                       isExpanded: true,
                       style: TextStyle(
-                        letterSpacing: 1.5,
-                      ),
+                          letterSpacing: 1.25,
+                          color: Colors.white70,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 17),
                       onClear: () {
                         setState(() => _country = '');
                       },
                     ),
+                    SizedBox(height: 20.0),
                     SearchableDropdown.single(
                       items: _states,
                       value: _state,
                       hint: "Select one State",
                       searchHint: "States",
-                      onChanged: (value) {
-                        setState(() => _state = value);
-                      },
+                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
+                      onChanged: (value) => setState(() => _state = value),
                       isExpanded: true,
                       style: TextStyle(
-                        letterSpacing: 1.5,
-                      ),
-                      onClear: () {
-                        setState(() => _state = '');
-                      },
+                          letterSpacing: 1.25,
+                          color: Colors.white70,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 17),
+                      onClear: () => setState(() => _state = ''),
                     ),
                     SizedBox(height: 20.0),
                     CustomButton(
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Color.fromRGBO(0, 168, 150, 1),
                       text: "Enter",
                       textColor: Colors.white,
                       actionOnpressed: () {
                         if (_formKey.currentState.validate()) {
-                          if (_category.isEmpty ||
-                              _country.isEmpty ||
-                              _state.isEmpty) {
+                          if (_category.length == 0 ||
+                              _country.length == 0 ||
+                              _state.length == 0) {
                             widget.scaffoldKey.currentState.showSnackBar(
                                 showSnackBar(
                                     'Select Category, Country and State',
                                     Colors.yellow[700]));
-                            print("emp");
                           } else {
                             createCommerceData();
                           }
