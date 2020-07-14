@@ -20,10 +20,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
       content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
-            Text(widget.text,
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.justify),
-            SizedBox(height: 20.0),
+            Text(
+              widget.text,
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.justify,
+            ),
           ],
         ),
       ),
@@ -40,7 +41,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
             'Si',
             style: TextStyle(color: Colors.white),
           ),
-          color: Colors.greenAccent,
+          color: Colors.greenAccent[700],
           onPressed: () {
             Navigator.pop(context, 1);
           },

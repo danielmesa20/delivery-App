@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
-  String local = 'http://192.168.250.7:4000';
+  //Test url
+  String local = 'http://192.168.250.8:4000';
 
   //Add New Product
   Future addProduct(Map product) async {
@@ -28,7 +30,6 @@ class DatabaseService {
     request.fields['commerce_id'] = id;
 
     //Open a byteStream
-    //var stream = new http.ByteStream(DelegatingStream.typed(product['image'].openRead()));
     var stream = new http.ByteStream(product['image'].openRead());
 
     //Get file length
@@ -41,14 +42,16 @@ class DatabaseService {
     //Add file to multipart
     request.files.add(multipartFile);
 
-    await request.send().then((response) async {
-      // listen for response
-      response.stream.transform(utf8.decoder).listen((value) {
-        return null;
-      });
-    }).catchError((e) {
-      return e;
-    });
+    //Check Internet Connection
+    bool result = await DataConnectionChecker().hasConnection;
+
+    if (result) {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      return jsonDecode(response.body);
+    } else {
+      return {'err': 'Check your connection'};
+    }
   }
 
 //Get Commerce Products
@@ -62,14 +65,22 @@ class DatabaseService {
     //API URL
     String url = "$local/products/commerceProducts/$id";
 
-    //API response
-    var response = await http.get(url);
+    //Check Internet Connection
+    bool result = await DataConnectionChecker().hasConnection;
 
-    //JSON to Map
-    var data = jsonDecode(response.body);
+    if (result) {
+      //API response
+      var response = await http.get(url);
 
-    //Return result
-    return data;
+      //JSON to Map
+      var data = jsonDecode(response.body);
+
+      //Return result
+      return data;
+    } else {
+      //Return error
+      return {'err': 'Check your internet connection.'};
+    }
   }
 
 //Update One Product
@@ -92,7 +103,6 @@ class DatabaseService {
 
     //Check Image exist
     if (product['image'] != null) {
-      print("image exist");
       //Open a byteStream
       var stream = new http.ByteStream(product['image'].openRead());
 
@@ -107,31 +117,70 @@ class DatabaseService {
       request.files.add(multipartFile);
     }
 
-    await request.send().then((response) async {
-      // listen for response
-      response.stream.transform(utf8.decoder).listen((value) {
-        return null;
-      });
-    }).catchError((e) {
-      return e;
-    });
+    //Check Internet Connection
+    bool result = await DataConnectionChecker().hasConnection;
+
+    if (result) {
+      //Send request
+      var streamedResponse = await request.send();
+
+      //Get Api response
+      var response = await http.Response.fromStream(streamedResponse);
+
+      //Return response
+      return jsonDecode(response.body);
+    } else {
+      return {'err': 'Check your connection'};
+    }
   }
 
-  //Get Commerce Products
+  //Delete Product
   Future deleteProduct(String id) async {
-   
     //API URL
     String url = "$local/products/delete/$id";
 
-    //API response
-    var response = await http.delete(url);
+    //Check Internet Connection
+    bool result = await DataConnectionChecker().hasConnection;
 
-    //JSON to Map
-    var data = jsonDecode(response.body);
+    if (result) {
+      //API response
+      var response = await http.delete(url);
 
-    //Return result
-    return data;
+      //JSON to Map
+      var data = jsonDecode(response.body);
+
+      //Return result
+      return data;
+    } else {
+      return {'err': 'Check your connection'};
+    }
   }
 
+  //Get Commerce data
+  Future getCommerceData() async {
+    //Get id commerce
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
+    //Send id commerce
+    String id = sharedPreferences.getString("commerce_id");
+
+    //API URL
+    String url = "$local/commerce/commerceData/$id";
+
+    //Check Internet Connection
+    bool result = await DataConnectionChecker().hasConnection;
+
+    if (result) {
+      //API response
+      var response = await http.get(url);
+
+      //JSON to Map
+      var data = jsonDecode(response.body);
+
+      //Return result
+      return data;
+    } else {
+      return {'err': 'Check your connection'};
+    }
+  }
 }

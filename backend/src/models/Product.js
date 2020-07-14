@@ -1,9 +1,4 @@
 const { Schema, model } = require('mongoose');
-var mongoose = require('mongoose');
-const mongooseDouble = require('mongoose-double');
-require('mongoose-double')(mongoose);
-
-var SchemaTypes = mongoose.Schema.Types;
 
 const ProductSchema = new Schema({
     name: { type: String, required: true },

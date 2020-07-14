@@ -1,0 +1,70 @@
+List<String> listCategories = [
+  'Restaurante',
+  'Supermarket',
+  'Drinks',
+  'Farmacy'
+];
+
+List<String> listCountries = ['Colombia', 'Venezuela', 'Chile'];
+
+List<String> listStatesVenezuela = [
+  'Amazonas',
+  'Anzoátegui',
+  'Apure',
+  'Aragua',
+  'Barinas',
+  'Bolívar',
+  'Carabobo',
+  'Cojedes',
+  'Delta Amacuro',
+  'Distrito Capital',
+  'Falcón',
+  'Guárico',
+  'Lara',
+  'Mérida',
+  'Miranda',
+  'Monagas',
+  'Nueva Esparta',
+  'Portuguesa',
+  'Sucre',
+  'Táchira',
+  'Trujillo',
+  'Vargas',
+  'Yaracuy',
+  'Zulia'
+];
+
+List<String> listStatesColombia = [
+  'Amazonas',
+  'Antioquía',
+  'Arauca',
+  'Atlántico',
+  'Boyacá',
+  'Cartagena de Indias',
+  'Caldas',
+  'Caquetá',
+  'Casanare',
+  'Cauca',
+  'Cesar',
+  'Chocó',
+  'Córdoba',
+  'Cundinamarca',
+  'Guainía',
+  'Guaviare',
+  'Huila',
+  'La Guajira',
+  'Magdalena',
+  'Meta',
+  'Nariño',
+  'Norte de Santander',
+  'Putumayo',
+  'Quindié',
+  'Risaralda',
+  'San Andrés y Providencia',
+  'Santander',
+  'Sucre',
+  'Tolima',
+  'Valle del Cauca',
+  'Vaupés',
+  'Vichada'
+];

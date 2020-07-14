@@ -1,12 +1,14 @@
-import 'package:brew_crew/Data/Countries.dart';
+import 'dart:io';
+import 'package:brew_crew/Data/select_data.dart';
 import 'package:brew_crew/services/auth.dart';
+import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/CustomButton.dart';
+import 'package:brew_crew/shared/CustomCircleAvatar.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:brew_crew/shared/Constants.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 
 class Register extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -24,35 +26,13 @@ class _RegisterState extends State<Register> {
   TextEditingController _emailC = new TextEditingController();
   TextEditingController _passwordC = new TextEditingController();
   TextEditingController _nameC = new TextEditingController();
-  List<DropdownMenuItem> _countries = [];
-  List<DropdownMenuItem> _categories = [];
-  List<DropdownMenuItem> _states = [];
-
-  @override
-  void initState() {
-    for (final element in EnumToString.toList(List_Countries.values)) {
-      _countries.add(DropdownMenuItem(
-        child: Text(element),
-        value: element,
-      ));
-    }
-    for (final element in EnumToString.toList(List_Categories.values)) {
-      _categories.add(DropdownMenuItem(
-        child: Text(element),
-        value: element,
-      ));
-    }
-    for (final element in EnumToString.toList(List_State_Colombia.values)) {
-      _states.add(DropdownMenuItem(
-        child: Text(element),
-        value: element,
-      ));
-    }
-    super.initState();
-  }
+  List<String> _countries = listCountries;
+  List<String> _categories = listCategories;
+  List<String> _states = listStatesColombia;
+  File _image;
 
   //Create commerce data
-  createCommerceData() async {
+  createCommerce() async {
     //Show Dialog
     onLoading(context);
 
@@ -63,25 +43,23 @@ class _RegisterState extends State<Register> {
       'category': _category,
       'country': _country,
       'state': _state,
-      'name': _nameC.text
+      'name': _nameC.text,
+      'image': _image,
     };
 
     //API result
-    dynamic result = await _auth.signUp(commerce);
+    var result = await _auth.signUp(commerce);
 
     //Pop Dialog
     Navigator.pop(context);
 
-    if (result != null) {
+    if (result['err'] != null) {
       //Show the snackbar with the err
       widget.scaffoldKey.currentState
-          .showSnackBar(showSnackBar(result, Colors.red));
+          .showSnackBar(showSnackBar(result['err'], Colors.red));
     } else {
       //Clear Form
       clearForm();
-
-      //Hidden Keyboard
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
 
       //Show the snackbar with the message
       widget.scaffoldKey.currentState
@@ -91,25 +69,35 @@ class _RegisterState extends State<Register> {
 
   //Change State Select Options
   changeListState(String nameSelect) {
-    List<DropdownMenuItem> aux = [];
     if (nameSelect == 'Venezuela') {
-      for (final element in EnumToString.toList(List_State_Venezuela.values)) {
-        aux.add(DropdownMenuItem(
-          child: Text(element),
-          value: element,
-        ));
-      }
+      setState(() => {_states = listStatesVenezuela, _state = ''});
     } else {
-      for (final element in EnumToString.toList(List_State_Colombia.values)) {
-        aux.add(DropdownMenuItem(
-          child: Text(element),
-          value: element,
-        ));
-      }
+      setState(() => {_states = listStatesColombia, _state = ''});
     }
-    setState(() {
-      _states = aux;
-    });
+  }
+
+  //Validate inputs
+  bool validate() {
+    //Empty select
+    if (_category.length == 0 || _country.length == 0 || _state.length == 0) {
+      widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
+          'Select Category, Country and State', Colors.yellow[700]));
+      return false;
+    } else if (_image == null) {
+      widget.scaffoldKey.currentState.showSnackBar(
+        showSnackBar(
+          'Dont Image Selected',
+          Colors.red,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  //Update image
+  void updateImage(File img) {
+    setState(() => _image = img);
   }
 
   //Clear Form
@@ -117,9 +105,15 @@ class _RegisterState extends State<Register> {
     _emailC.clear();
     _passwordC.clear();
     _nameC.clear();
+    setState(() {
+      _image = null;
+      _category = '';
+      _country = '';
+      _state = '';
+    });
   }
 
-  // Limpia el controlador cuando el widget se elimine del árbol de widgets
+  // Clean controller
   void dispose() {
     _emailC.dispose();
     _passwordC.dispose();
@@ -135,166 +129,200 @@ class _RegisterState extends State<Register> {
           children: <Widget>[
             Form(
               key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    Text(
-                      "Register Your Commerce",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 30.0,
-                          fontFamily: 'Prima',
-                          letterSpacing: 1.5,
-                          color: Color.fromRGBO(240, 243, 189, 1)),
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      controller: _emailC,
-                      keyboardType: TextInputType.emailAddress,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      decoration: inputDecoration(
-                        'Enter Your Email Here',
-                        Icons.email,
-                      ),
-                      style:
-                          TextStyle(color: Colors.white70, letterSpacing: 1.25),
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'Enter an email';
-                        } else if (!validateEmail(val)) {
-                          return 'Enter an valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      controller: _passwordC,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      style:
-                          TextStyle(color: Colors.white70, letterSpacing: 1.25),
-                      decoration: inputDecoration(
-                        'Enter Your Password Here',
-                        Icons.security,
-                      ).copyWith(
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _hidden == true
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: Colors.black,
-                          ),
-                          onPressed: () => setState(() => _hidden = !_hidden),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  var width = (constraints.maxWidth / 8);
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: width, vertical: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        SizedBox(height: 20.0),
+                        Text(
+                          "Register Your Commerce",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 30.0,
+                              fontFamily: 'Prima',
+                              letterSpacing: 1.5,
+                              color: Color.fromRGBO(240, 243, 189, 1)),
                         ),
-                      ),
-                      obscureText: _hidden,
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'Enter a password';
-                        } else if (val.length < 6) {
-                          return 'Enter a password 6+ chars long';
-                        }
-                        return null;
-                      },
+                        SizedBox(height: 20.0),
+                        CustomCircleAvatar(
+                          color: Color.fromRGBO(0, 168, 150, 100),
+                          action: updateImage,
+                        ),
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _emailC,
+                          keyboardType: TextInputType.emailAddress,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: inputDecoration('Email', Icons.email),
+                          style: TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 1.25,
+                          ),
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return 'Enter an email';
+                            } else if (!validateEmail(val)) {
+                              return 'Enter an valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _passwordC,
+                          textAlignVertical: TextAlignVertical.top,
+                          style: TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 1.25,
+                          ),
+                          decoration:
+                              inputDecoration('Password', Icons.security)
+                                  .copyWith(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _hidden == true
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                          color: Colors.white70,
+                                        ),
+                                        onPressed: () =>
+                                            setState(() => _hidden = !_hidden),
+                                      ),
+                                      helperText:
+                                          'Must have more than 6 characters.',
+                                      helperStyle: TextStyle(
+                                          color: Colors.grey[300],
+                                          fontSize: 14)),
+                          obscureText: _hidden,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return 'Enter a password';
+                            } else if (val.length < 6) {
+                              return 'Enter a password 6+ chars long';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _nameC,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: inputDecoration('Name'),
+                          style: TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 1.25,
+                          ),
+                          validator: (val) {
+                            if (val.isEmpty) return 'Enter an name';
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        CustomButton(
+                          actionOnpressed: () => showMaterialScrollPicker(
+                            context: context,
+                            title: "Select one Category",
+                            items: _categories,
+                            selectedItem: _category,
+                            backgroundColor: Color.fromRGBO(0, 168, 150, 10),
+                            buttonTextColor: Colors.white,
+                            confirmText: "SELECT",
+                            headerColor: Color.fromRGBO(2, 89, 111, 1),
+                            headerTextColor: Colors.white,
+                            onChanged: (value) =>
+                                setState(() => _category = value),
+                          ),
+                          backgroundColor: Color.fromRGBO(2, 89, 111, 1),
+                          text: _category.isEmpty
+                              ? "Select One Category"
+                              : "Selected: $_category",
+                          textColor: Colors.white,
+                          shapeColor: _category.isEmpty
+                              ? Colors.redAccent[700]
+                              : Colors.greenAccent[700],
+                        ),
+                        SizedBox(height: 10.0),
+                        CustomButton(
+                          actionOnpressed: () => showMaterialScrollPicker(
+                            context: context,
+                            title: "Select one Country",
+                            items: _countries,
+                            selectedItem: _country,
+                            backgroundColor: Color.fromRGBO(2, 89, 111, 1),
+                            buttonTextColor: Colors.white,
+                            confirmText: "SELECT",
+                            headerColor: Color.fromRGBO(0, 168, 150, 10),
+                            headerTextColor: Colors.white,
+                            onChanged: (value) => {
+                              setState(() => {_country = value}),
+                              changeListState(value)
+                            },
+                          ),
+                          backgroundColor: Color.fromRGBO(2, 89, 111, 1),
+                          text: _country.isEmpty
+                              ? "Select One Country"
+                              : "Selected: $_country",
+                          textColor: Colors.white,
+                          shapeColor: _country.isEmpty
+                              ? Colors.redAccent[700]
+                              : Colors.greenAccent[700],
+                        ),
+                        SizedBox(height: 10.0),
+                        CustomButton(
+                          actionOnpressed: () => showMaterialScrollPicker(
+                            context: context,
+                            title: "Select one State",
+                            items: _states,
+                            selectedItem: _state,
+                            backgroundColor: Color.fromRGBO(2, 89, 111, 1),
+                            buttonTextColor: Colors.white,
+                            confirmText: "SELECT",
+                            headerColor: Color.fromRGBO(0, 168, 150, 10),
+                            headerTextColor: Colors.white,
+                            onChanged: (value) =>
+                                setState(() => _state = value),
+                          ),
+                          backgroundColor: Color.fromRGBO(2, 89, 111, 1),
+                          text: _state.isEmpty
+                              ? "Select One State"
+                              : "Selected: $_state",
+                          textColor: Colors.white,
+                          shapeColor: _state.isEmpty
+                              ? Colors.redAccent[700]
+                              : Colors.greenAccent[700],
+                        ),
+                        SizedBox(height: 10.0),
+                        CustomButton(
+                          backgroundColor: Color.fromRGBO(0, 168, 150, 1),
+                          text: "Enter",
+                          textColor: Colors.white,
+                          actionOnpressed: () async {
+                            if (_formKey.currentState.validate() &&
+                                validate()) {
+                              final result = await showDialog<int>(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return CustomAlertDialog(
+                                      text:
+                                          'Are you sure you want to register ' +
+                                              'with these data?');
+                                },
+                              );
+                              //Answer yes in the AlertDialog
+                              if (result == 1) createCommerce();
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      controller: _nameC,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      decoration: inputDecoration(
-                        'Enter Your Name Here',
-                      ),
-                      style: TextStyle(
-                        color: Colors.white70,
-                        letterSpacing: 1.25,
-                      ),
-                      validator: (val) {
-                        if (val.isEmpty) return 'Enter an name';
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    SearchableDropdown.single(
-                      items: _categories,
-                      value: _category,
-                      hint: "Select one Category",
-                      searchHint: "Categories",
-                      isExpanded: true,
-                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
-                      onChanged: (value) {
-                        setState(() => _category = value);
-                      },
-                      style: TextStyle(
-                          letterSpacing: 1.25,
-                          color: Colors.white70,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 17),
-                      onClear: () {
-                        setState(() => _category = '');
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    SearchableDropdown.single(
-                      items: _countries,
-                      value: _country,
-                      hint: "Select one Country",
-                      searchHint: "Countries",
-                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
-                      onChanged: (value) {
-                        setState(() => _country = value);
-                        changeListState(_country);
-                      },
-                      isExpanded: true,
-                      style: TextStyle(
-                          letterSpacing: 1.25,
-                          color: Colors.white70,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 17),
-                      onClear: () {
-                        setState(() => _country = '');
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    SearchableDropdown.single(
-                      items: _states,
-                      value: _state,
-                      hint: "Select one State",
-                      searchHint: "States",
-                      menuBackgroundColor: Color.fromRGBO(0, 168, 150, 100),
-                      onChanged: (value) => setState(() => _state = value),
-                      isExpanded: true,
-                      style: TextStyle(
-                          letterSpacing: 1.25,
-                          color: Colors.white70,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 17),
-                      onClear: () => setState(() => _state = ''),
-                    ),
-                    SizedBox(height: 20.0),
-                    CustomButton(
-                      backgroundColor: Color.fromRGBO(0, 168, 150, 1),
-                      text: "Enter",
-                      textColor: Colors.white,
-                      actionOnpressed: () {
-                        if (_formKey.currentState.validate()) {
-                          if (_category.length == 0 ||
-                              _country.length == 0 ||
-                              _state.length == 0) {
-                            widget.scaffoldKey.currentState.showSnackBar(
-                                showSnackBar(
-                                    'Select Category, Country and State',
-                                    Colors.yellow[700]));
-                          } else {
-                            createCommerceData();
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],

@@ -9,7 +9,10 @@ const CommerceSchema = new Schema({
     country:     { type: String, require: true },
     state:       { type: String, require: true },
     description: { type: String, require: true,  default: null },
-    reputation:  { type: Number, require: true, default: 0 }
+    reputation:  { type: Number, require: true, default: 0 },
+    imageURL: { type: String, required: true },
+    public_id: { type: String, required: true },
+    create: { type: Date, default: Date.now }
 });
 
 CommerceSchema.methods.encryptPassword = (password) => {

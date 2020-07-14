@@ -1,6 +1,7 @@
 import 'package:brew_crew/screens/authenticate/tab_auth.dart';
 import 'package:brew_crew/screens/products/add_product.dart';
 import 'package:brew_crew/screens/products/list_products.dart';
+import 'package:brew_crew/screens/profile/profileData.dart';
 import 'package:brew_crew/services/auth.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class _HomeState extends State<Home> {
   final List<Widget> _pageOptions = <Widget>[
     ListProducts(),
     AddProduct(),
-    AddProduct(),
+    ProfileData(),
   ];
 
   @override
@@ -30,26 +31,36 @@ class _HomeState extends State<Home> {
         elevation: 0.0,
         actions: <Widget>[
           PopupMenuButton<int>(
-              color: Color.fromRGBO(0, 168, 150, 1),
-              offset: Offset(0, 100),
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 1,
-                      child: Text(
-                        "Logout",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17.0,
-                          letterSpacing: 1.25,
-                        ),
-                      ),
-                    ),
-                  ],
-              onSelected: (value) async {
-                await _auth.signOut();
-                changeScreen(context, TabAuth());
-              }),
+            color: Color.fromRGBO(0, 168, 150, 1),
+            offset: Offset(0, 100),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 1,
+                child: Text(
+                  "Logout",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17.0,
+                    letterSpacing: 1.25,
+                  ),
+                ),
+              ),
+            ],
+            onSelected: (value) async {
+              //Show Loading Dialog
+              onLoading(context);
+
+              //SignOut
+              await _auth.signOut();
+
+              //Pop Dialog
+              Navigator.pop(context);
+
+              //Go to login screen
+              changeScreen(context, TabAuth());
+            },
+          ),
         ],
       ),
       body: _pageOptions[_selectedPage],

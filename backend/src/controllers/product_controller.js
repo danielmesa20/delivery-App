@@ -2,12 +2,11 @@ const Product = require("../models/Product");
 const Comment = require("../models/Comment");
 const Cloudinary = require("../config/cloudinary");
 const fs = require('fs-extra');
-const { Model } = require("mongoose");
 
 //Get all products (DELETE)
 exports.allProducts = async (req, res) => {
     try {
-        const products = await Product.find().select('-description');;
+        const products = await Product.find().select('-description');
         return res.status(200).json({ err: null, products });
     } catch (err) {
         return res.status(400).json({ err });
@@ -48,8 +47,7 @@ exports.newProduct = async (req, res) => {
         fs.unlinkSync(req.file.path);
         return res.status(200).json({ err: null, product });
     } catch (err) {
-        console.log("Error add: ", err);
-        return res.status(400).json({ err: 'Error add product' });
+        return res.status(400).json({ err });
     }
 };
 
@@ -131,7 +129,6 @@ exports.findOne = async (req, res) => {
         return res.status(400).json({ err, product: null, comments: null });
     }
 }
-
 
 //Add comment
 exports.addComment = async (req, res) => {

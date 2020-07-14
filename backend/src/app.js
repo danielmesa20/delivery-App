@@ -1,6 +1,5 @@
 const express = require('express');
 const morgan = require('morgan'); 
-const session = require('express-session');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
@@ -30,13 +29,6 @@ const storage = multer.diskStorage({
 });
 app.use(multer({storage}).single('myImage'));
 
-//Passport session
-app.use(session({
-    secret: process.env.SECRET,
-    saveUninitialized: false,
-    resave: false
-}));
-
 //Global Variables
 app.use((req, res, next) => {
     res.locals.user = req.user || null;
@@ -44,7 +36,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/auth', require('./routes/auth_routes'));
 app.use('/products', require('./routes/products_routes'));
+app.use('/commerce', require('./routes/commerce_routes'));
 
 module.exports = app;

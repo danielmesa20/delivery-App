@@ -38,18 +38,20 @@ void onLoading(context) {
         backgroundColor: Color.fromRGBO(2, 128, 144, 1),
         children: [
           Center(
-            child: Column(children: [
-              CircularProgressIndicator(
-                backgroundColor: Color.fromRGBO(0, 168, 150, 1),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Please Wait....",
-                style: TextStyle(color: Colors.white),
-              )
-            ]),
+            child: Column(
+              children: [
+                CircularProgressIndicator(
+                  backgroundColor: Color.fromRGBO(0, 168, 150, 1),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Please Wait....",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
           ),
         ],
       );
