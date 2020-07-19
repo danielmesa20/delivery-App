@@ -1,11 +1,12 @@
-import 'package:brew_crew/models/Product.dart';
+import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
 import 'package:brew_crew/screens/products/add_product.dart';
+import 'package:brew_crew/screens/products/empty_list_products.dart';
 import 'package:brew_crew/screens/products/product_tile.dart';
-import 'package:brew_crew/services/database.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
-import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/Functions.dart';
+import 'package:brew_crew/shared/Loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListProducts extends StatefulWidget {
   @override
@@ -14,61 +15,7 @@ class ListProducts extends StatefulWidget {
 
 class _ListProductsState extends State<ListProducts> {
   //Variables
-  List<dynamic> _products;
-  final _database = DatabaseService();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  //Load products
-  @override
-  void initState() {
-    super.initState();
-    getProducts();
-  }
-
-  //Get products commerce from API
-  getProducts() async {
-    
-    //Recived result Api
-    dynamic result = await _database.getProducts();
-
-    if (result['err'] == null) {
-      setState(() {
-        _products =
-            result['products'].map((model) => Product.fromJson(model)).toList();
-      });
-    } else {
-
-      //setState(() => _products = []);
-      
-      //Show the snackbar with the err
-      _scaffoldKey.currentState
-          .showSnackBar(showSnackBar(result['err'], Colors.red));
-
-          
-    }
-  }
-
-  //Delete product
-  deleteProduct(String id) async {
-    //Show Dialog
-    onLoading(context);
-
-    //Recived result Api
-    dynamic result = await _database.deleteProduct(id);
-
-    //Pop Dialog
-    Navigator.pop(context);
-
-    if (result['err'] == null) {
-      //Show the snackbar with the err
-      _scaffoldKey.currentState.showSnackBar(
-          showSnackBar('Delete product completed', Colors.green[500]));
-    } else {
-      //Show the snackbar with the err
-      _scaffoldKey.currentState
-          .showSnackBar(showSnackBar(result['err'], Colors.red));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,141 +24,110 @@ class _ListProductsState extends State<ListProducts> {
       backgroundColor: Color.fromRGBO(2, 128, 144, 1),
       body: SafeArea(
         child: Center(
-          child: _products == null
-              ? CircularProgressIndicator()
-              : _products.length > 0
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          FittedBox(
-                            fit: BoxFit.contain,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  "Available",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18.0),
+          child: BlocListener<ListproductsBloc, ListproductsState>(
+            listener: (context, state) {
+              if (state is FailedState) {
+                //Show the snackbar with the err
+                _scaffoldKey.currentState
+                    .showSnackBar(showSnackBar(state.error, Colors.red));
+              } else if (state is FailedDelete) {
+                _scaffoldKey.currentState
+                    .showSnackBar(showSnackBar(state.error, Colors.red));
+                //Reload list of products
+                BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
+              } else if (state is SuccessDelete) {
+                _scaffoldKey.currentState.showSnackBar(showSnackBar(
+                    'Delete Product Completed.', Colors.green[700]));
+                //Reload list of products
+                BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
+              } else if (state is FailedState) {
+                //Reload list of products
+                BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
+                _scaffoldKey.currentState
+                    .showSnackBar(showSnackBar(state.error, Colors.green[700]));
+              }
+            },
+            child: BlocBuilder<ListproductsBloc, ListproductsState>(
+              builder: (context, state) {
+                if (state is LoadingProducts) {
+                  return Loading();
+                } else if (state is SuccessLoad) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 5, vertical: 20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.products.length,
+                            itemBuilder: (context, index) {
+                              return Dismissible(
+                                key: ValueKey(state.products[index]),
+                                child: ProductTile(
+                                  product: state.products[index],
+                                  scaffoldKey: _scaffoldKey,
                                 ),
-                                SizedBox(width: 5.0),
-                                CircleAvatar(
-                                  backgroundColor: Colors.green,
-                                  radius: 10.0,
+                                direction: DismissDirection.endToStart,
+                                background: Container(
+                                  color: Colors.green,
                                 ),
-                                SizedBox(width: 20.0),
-                                Text(
-                                  "Not Available",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18.0),
-                                ),
-                                SizedBox(width: 5.0),
-                                CircleAvatar(
-                                  backgroundColor: Colors.red,
-                                  radius: 10.0,
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10.0),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: _products.length,
-                              itemBuilder: (context, index) {
-                                return Dismissible(
-                                  key: ValueKey(_products[index]),
-                                  child: ProductTile(
-                                    product: _products[index],
-                                    scaffoldKey: _scaffoldKey,
-                                  ),
-                                  direction: DismissDirection.endToStart,
-                                  background: Container(
-                                    color: Colors.green,
-                                  ),
-                                  secondaryBackground: Container(
-                                    color: Colors.red,
-                                    child: Align(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.delete,
+                                secondaryBackground: Container(
+                                  color: Colors.red,
+                                  child: Align(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          " Delete",
+                                          style: TextStyle(
                                             color: Colors.white,
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                          Text(
-                                            " Delete",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                            textAlign: TextAlign.right,
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                        ],
-                                      ),
-                                      alignment: Alignment.centerRight,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                        SizedBox(width: 20),
+                                      ],
                                     ),
+                                    alignment: Alignment.centerRight,
                                   ),
-                                  confirmDismiss: (direction) async {
-                                    final result = await showDialog<int>(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (BuildContext context) {
-                                        return CustomAlertDialog(
-                                            text: 'Are you sure you want to delete' +
-                                                ' the product: ${_products[index].name}');
-                                      },
-                                    );
-                                    if (result == 0) {
-                                      return false;
-                                    } else {
-                                      deleteProduct(_products[index].id);
-                                      return true;
-                                    }
-                                  },
-                                );
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  : Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(2, 128, 144, 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                                ),
+                                confirmDismiss: (direction) async {
+                                  final result = await showDialog<int>(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return CustomAlertDialog(
+                                          text: 'Are you sure you want to delete' +
+                                              ' the product: ${state.products[index].name}');
+                                    },
+                                  );
+                                  if (result == 0) {
+                                    return false;
+                                  } else {
+                                    BlocProvider.of<ListproductsBloc>(context)
+                                        .add(DeleteProduct(id: 'zxfsdfs'));
+                                    return true;
+                                  }
+                                },
+                              );
+                            },
+                          ),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Color.fromRGBO(240, 243, 189, 10),
-                              blurRadius: 4.0),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            "There are no products.",
-                            style: TextStyle(
-                                fontSize: 20.0,
-                                color: Colors.white,
-                                fontStyle: FontStyle.italic),
-                          ),
-                          CustomButton(
-                            actionOnpressed: getProducts(),
-                            text: 'refresh',
-                            backgroundColor: Color.fromRGBO(240, 243, 189, 10),
-                            textColor: Colors.black,
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
+                  );
+                } else if (state is FailedState || state is EmptyList) {
+                  return EmptyListProducts();
+                }
+                return Container();
+              },
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -228,11 +144,11 @@ class _ListProductsState extends State<ListProducts> {
             ),
           );
           if (result != null) {
-            //Show message
+            //Show Add message completed
             _scaffoldKey.currentState
                 .showSnackBar(showSnackBar(result, Colors.green[500]));
-            //Refresh list of products
-            getProducts();
+            //Reload list of products
+            BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
           }
         },
       ),

@@ -11,11 +11,12 @@ bool validateEmail(String email) {
 // Function Show SnackBar
 showSnackBar(String text, Color color) {
   return SnackBar(
-      content: Text(
-        text,
-        textAlign: TextAlign.center,
-      ),
-      backgroundColor: color);
+    content: Text(
+      text,
+      textAlign: TextAlign.center,
+    ),
+    backgroundColor: color,
+  );
 }
 
 // Go to Login Screen
@@ -48,7 +49,9 @@ void onLoading(context) {
                 ),
                 Text(
                   "Please Wait....",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

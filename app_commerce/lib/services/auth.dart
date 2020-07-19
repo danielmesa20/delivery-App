@@ -5,8 +5,8 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  //Test url
-  String local = 'http://192.168.250.8:4000';
+  //local url
+  String local = 'http://192.168.250.5:4000';
 
   // SignUp
   Future signUp(Map commerce) async {
@@ -38,9 +38,9 @@ class AuthService {
     request.files.add(multipartFile);
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
+    if (hasConnection) {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
       return jsonDecode(response.body);
@@ -58,9 +58,9 @@ class AuthService {
     String url = "$local/commerce/signincommerce";
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
+    if (hasConnection) {
       //API response
       var response = await http.post(url, body: credentials);
 
@@ -87,7 +87,9 @@ class AuthService {
   }
 
   // Password reset
-  Future resetPassword(String email) async {}
+  Future resetPassword(String email) async {
+    
+  }
 
   // Sign out
   Future signOut() async {
@@ -95,5 +97,17 @@ class AuthService {
     SharedPreferences sharedPreferences;
     sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.clear();
+  }
+
+  //Check  user is signed in
+  Future isSignedIn() async {
+     //Get token auth
+    SharedPreferences sharedPreferences;
+    sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.getString("token") == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

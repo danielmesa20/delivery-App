@@ -1,10 +1,10 @@
-import 'package:brew_crew/screens/authenticate/tab_auth.dart';
+import 'package:brew_crew/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
 import 'package:brew_crew/screens/products/add_product.dart';
 import 'package:brew_crew/screens/products/list_products.dart';
 import 'package:brew_crew/screens/profile/profileData.dart';
-import 'package:brew_crew/services/auth.dart';
-import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -12,7 +12,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _auth = AuthService();
   //Current Screen
   int _selectedPage = 0;
   //Screen options
@@ -48,22 +47,22 @@ class _HomeState extends State<Home> {
               ),
             ],
             onSelected: (value) async {
-              //Show Loading Dialog
-              onLoading(context);
-
-              //SignOut
-              await _auth.signOut();
-
-              //Pop Dialog
-              Navigator.pop(context);
-
-              //Go to login screen
-              changeScreen(context, TabAuth());
+              BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
             },
           ),
         ],
       ),
-      body: _pageOptions[_selectedPage],
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ListproductsBloc()..add(LoadProducts()),
+          ),
+          /*BlocProvider(
+            create: (context) => AddproductBloc(),
+          ),*/
+        ],
+        child: _pageOptions[_selectedPage],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.white,

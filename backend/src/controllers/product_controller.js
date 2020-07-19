@@ -65,6 +65,8 @@ exports.updateProduct = async (req, res) => {
             //Update imageURL and public_id
             imageURL = result.url;
             public_id = result.public_id;
+            //Delete image in backend
+            fs.unlinkSync(req.file.path);
         } catch (error) {
             console.log("err update cloudinary ", err);
             return res.status(400).json({ err });
@@ -87,8 +89,7 @@ exports.updateProduct = async (req, res) => {
                 new: true,
                 upsert: true
             });
-        //Delete image in backend
-        fs.unlinkSync(req.file.path);
+
         return res.status(200).json({ err: null, product });
 
     } catch (err) {
@@ -105,7 +106,7 @@ exports.deleteProduct = async (req, res) => {
         await Cloudinary.v2.uploader.destroy(product.public_id);
         return res.status(200).json({ err: null });
     } catch (err) {
-        return res.status(400).json({ err });
+        return res.status(400).json({ err: 'Error to delete the product id: ',idProduct });
     }
 }
 

@@ -5,7 +5,9 @@ import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/CustomCircleAvatar.dart';
+import 'package:brew_crew/shared/CustomTitle.dart';
 import 'package:brew_crew/shared/Functions.dart';
+import 'package:brew_crew/shared/Loading.dart';
 import 'package:flutter/material.dart';
 
 class ProfileData extends StatefulWidget {
@@ -65,7 +67,7 @@ class _ProfileDataState extends State<ProfileData> {
       body: SafeArea(
         child: Center(
           child: _commerce == null
-              ? CircularProgressIndicator()
+              ? Loading()
               : SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
@@ -83,15 +85,9 @@ class _ProfileDataState extends State<ProfileData> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   SizedBox(height: 20.0),
-                                  Text(
-                                    "Profile",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 30.0,
-                                      fontFamily: 'Prima',
-                                      letterSpacing: 1.5,
-                                      color: Color.fromRGBO(240, 243, 189, 1),
-                                    ),
+                                  CustomTitle(
+                                    size: width * 1.15,
+                                    text: "Profile",
                                   ),
                                   SizedBox(height: 20.0),
                                   CustomCircleAvatar(
@@ -103,8 +99,7 @@ class _ProfileDataState extends State<ProfileData> {
                                   TextFormField(
                                     controller: _nameC,
                                     textAlignVertical: TextAlignVertical.top,
-                                    decoration:
-                                        inputDecoration('Name'),
+                                    decoration: inputDecoration('Name'),
                                     maxLength: 30,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -144,8 +139,9 @@ class _ProfileDataState extends State<ProfileData> {
                                             barrierDismissible: false,
                                             builder: (BuildContext context) {
                                               return CustomAlertDialog(
-                                                  text: 'Are you sure you want to create the' +
-                                                      'product with those characteristics?');
+                                                  text:
+                                                      'Are you sure you want to update the' +
+                                                          'data?');
                                             },
                                           );
                                           //Answer yes in the AlertDialog

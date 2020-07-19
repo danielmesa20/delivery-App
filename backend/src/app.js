@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 const app = express();
 
 //Connect two servers
-app.use(cors())
+app.use(cors());
 
 // Settings
 app.set('port', process.env.PORT || 4000);

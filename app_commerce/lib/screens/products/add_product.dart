@@ -4,8 +4,10 @@ import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/CustomCircleAvatar.dart';
+import 'package:brew_crew/shared/CustomTitle.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddProduct extends StatefulWidget {
   AddProduct({Key key}) : super(key: key);
@@ -96,14 +98,9 @@ class _AddProductState extends State<AddProduct> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           SizedBox(height: 20.0),
-                          Text(
-                            "Add Product",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 30.0,
-                                fontFamily: 'Prima',
-                                letterSpacing: 1.5,
-                                color: Color.fromRGBO(240, 243, 189, 1)),
+                          CustomTitle(
+                            size: width * 1.15,
+                            text: "Add Product",
                           ),
                           SizedBox(height: 20.0),
                           CustomCircleAvatar(

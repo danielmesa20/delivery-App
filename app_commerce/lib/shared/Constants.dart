@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // InputDecoration
-InputDecoration inputDecoration(String text, [IconData icon]) {
+InputDecoration inputDecoration(String text, [IconData icon, String textHelper]) {
   return InputDecoration(
     prefixIcon: icon != null
         ? Icon(
@@ -32,5 +32,7 @@ InputDecoration inputDecoration(String text, [IconData icon]) {
       color: Colors.white,
       letterSpacing: 1.25,
     ),
+    helperText: textHelper,
+    helperStyle: TextStyle(color: Colors.grey[300], fontSize: 14),
   );
 }

@@ -75,10 +75,11 @@ class _CustomCircleAvatarState extends State<CustomCircleAvatar> {
     );
     if (result == 0) {
       setState(() => _image = null);
+      widget.action(null);
     } else if (result == 1) {
       getImage(ImageSource.gallery);
     } else if (result == 2) {
-      getImage(ImageSource.gallery);
+      getImage(ImageSource.camera);
     } else if (result == 3) {
       if (_image != null) {
         cropImage(_image);
@@ -95,22 +96,25 @@ class _CustomCircleAvatarState extends State<CustomCircleAvatar> {
     return Container(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          var radius = min(constraints.maxHeight / 3, constraints.maxWidth / 3);
+          var radius =
+              min(constraints.maxHeight / 3.5, constraints.maxWidth / 3.5);
           return CircleAvatar(
             radius: radius,
             backgroundColor: widget.color,
             child: InkWell(
               child: CircleAvatar(
                   radius: radius - 5,
+                  backgroundColor: Color.fromRGBO(2, 89, 111, 126),
                   child: widget.url != null
                       ? CachedNetworkImage(
-                        color: Color.fromRGBO(2, 128, 144, 1),
+                          color: Color.fromRGBO(2, 128, 144, 1),
                           imageUrl: widget.url,
                           placeholder: (context, url) =>
                               CircularProgressIndicator(
                             backgroundColor: Colors.white,
                           ),
                           imageBuilder: (context, image) => CircleAvatar(
+                            backgroundColor: Color.fromRGBO(2, 89, 111, 126),
                             backgroundImage: image,
                             radius: radius - 5,
                           ),
@@ -121,9 +125,7 @@ class _CustomCircleAvatarState extends State<CustomCircleAvatar> {
                           ? AssetImage("assets/imagedontfound.png")
                           : FileImage(_image)
                       : null),
-              onTap: () {
-                _showAddPanel();
-              },
+              onTap: () => _showAddPanel(),
             ),
           );
         },

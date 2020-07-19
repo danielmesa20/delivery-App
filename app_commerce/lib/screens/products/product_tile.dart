@@ -1,8 +1,10 @@
+import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
 import 'package:brew_crew/models/Product.dart';
 import 'package:brew_crew/screens/products/update_product.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductTile extends StatefulWidget {
   //Product object
@@ -36,6 +38,7 @@ class _ProductTileState extends State<ProductTile> {
               backgroundColor: Colors.white,
             ),
             imageBuilder: (context, image) => CircleAvatar(
+              backgroundColor: Color.fromRGBO(2, 89, 111, 126),
               backgroundImage: image,
               radius: 25,
             ),
@@ -60,6 +63,8 @@ class _ProductTileState extends State<ProductTile> {
             //Show the snackbar with the message
             widget.scaffoldKey.currentState
                 .showSnackBar(showSnackBar(result, Colors.greenAccent));
+            //Reload product list
+            BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
           }
         },
       ),

@@ -5,8 +5,8 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
-  //Test url
-  String local = 'http://192.168.250.8:4000';
+  //Local url
+  String local = 'http://192.168.250.5:4000';
 
   //Add New Product
   Future addProduct(Map product) async {
@@ -66,17 +66,23 @@ class DatabaseService {
     String url = "$local/products/commerceProducts/$id";
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
-      //API response
-      var response = await http.get(url);
+    if (hasConnection) {
+      try {
+        //API response
+        var response = await http.get(url);
 
-      //JSON to Map
-      var data = jsonDecode(response.body);
+        //JSON to Map
+        var data = jsonDecode(response.body);
 
-      //Return result
-      return data;
+        //Return result
+        return data;
+
+      } catch (e) {
+        print("err api");
+        return {'err': 'Api dont response'};
+      }
     } else {
       //Return error
       return {'err': 'Check your internet connection.'};
@@ -118,9 +124,9 @@ class DatabaseService {
     }
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
+    if (hasConnection) {
       //Send request
       var streamedResponse = await request.send();
 
@@ -140,9 +146,9 @@ class DatabaseService {
     String url = "$local/products/delete/$id";
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
+    if (hasConnection) {
       //API response
       var response = await http.delete(url);
 
@@ -168,9 +174,9 @@ class DatabaseService {
     String url = "$local/commerce/commerceData/$id";
 
     //Check Internet Connection
-    bool result = await DataConnectionChecker().hasConnection;
+    bool hasConnection = await DataConnectionChecker().hasConnection;
 
-    if (result) {
+    if (hasConnection) {
       //API response
       var response = await http.get(url);
 

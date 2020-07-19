@@ -30,7 +30,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
       ),
       actions: <Widget>[
         FlatButton(
-          child: Text('No'),
+          child: Text('Cancel'),
           color: Colors.red,
           onPressed: () {
             Navigator.pop(context, 0);
@@ -38,7 +38,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
         ),
         FlatButton(
           child: Text(
-            'Si',
+            'Yes',
             style: TextStyle(color: Colors.white),
           ),
           color: Colors.greenAccent[700],

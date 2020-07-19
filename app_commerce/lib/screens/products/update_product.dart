@@ -5,6 +5,7 @@ import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/CustomCircleAvatar.dart';
+import 'package:brew_crew/shared/CustomTitle.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
 
@@ -125,14 +126,9 @@ class _UpdateProductState extends State<UpdateProduct> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         SizedBox(height: 20.0),
-                        Text(
-                          "Update Product",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 30.0,
-                              fontFamily: 'Prima',
-                              letterSpacing: 1.5,
-                              color: Color.fromRGBO(240, 243, 189, 1)),
+                        CustomTitle(
+                          size: width * 1.15,
+                          text: "Update Product",
                         ),
                         SizedBox(height: 20.0),
                         CustomCircleAvatar(

@@ -1,6 +1,9 @@
 const Commerce = require("../models/Commerce");
 const Cloudinary = require("../config/cloudinary");
 const jwt = require('jsonwebtoken');
+const fs = require('fs-extra');
+const mailgun = require("mailgun-js");
+const mg = mailgun({apiKey: process.env.MAIL_GUN_APIKEY, domain: process.env.DOMAIN_MAIL_GUN});
 
 //SignUp Commerce
 exports.signUpCommerce = async (req, res) => {
@@ -9,9 +12,20 @@ exports.signUpCommerce = async (req, res) => {
 
     try {
         //Check email use
-        const commerce = await Commerce.findOne({ email }).select('_id');;
+        const commerce = await Commerce.findOne({ email }).select('_id');
 
         if (!commerce) {
+
+            //Verify email
+            const data = {
+                from: '"Excited User" <noreply@hello.com>',
+                to: email,
+                subject: 'Hello',
+                text: 'Testing some Mailgun awesomness!'
+            };
+            mg.messages().send(data, function (error, body) {
+                console.log(body);
+            });
 
             //Upload image to Cloudinary
             const result = await Cloudinary.v2.uploader.upload(req.file.path);
@@ -26,16 +40,15 @@ exports.signUpCommerce = async (req, res) => {
                 imageURL: result.url,
                 public_id: result.public_id,
             });
-            
+            //Encrypt password 
             newCommerce.password = await newCommerce.encryptPassword(password);
-            try {
-                await newCommerce.save();
-                return res.status(200).json({ err: null });
-            } catch (err) {
-                return res.status(400).json({ err: 'error' });
-            }
+            //Save commerce in MongoDB
+            await newCommerce.save();
+            //Delete image 
+            fs.unlinkSync(req.file.path);
+            return res.status(200).json({ err: null });
         }
-        
+
         return res.status(400).json({ err: 'Email already used' });
 
     } catch (err) {
@@ -115,7 +128,7 @@ exports.resetPasswordCommerce = async (req, res) => {
             const data = {
                 from: 'noreply@hello.com',
                 to: email,
-                subject: 'Acoount Activation Link',
+                subject: 'Account Activation Link',
                 html: `
                 <h2>Please click on given link to reset your passoword</h2>
                 <p>${process.env.CLIENT_URL}/authentication/resetpassword/${token}</p>
