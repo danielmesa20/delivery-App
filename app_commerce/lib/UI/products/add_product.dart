@@ -7,16 +7,15 @@ import 'package:brew_crew/shared/CustomCircleAvatar.dart';
 import 'package:brew_crew/shared/CustomTitle.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddProduct extends StatefulWidget {
-  AddProduct({Key key}) : super(key: key);
+class AddProductScreen extends StatefulWidget {
+  AddProductScreen({Key key}) : super(key: key);
 
   @override
   _AddProductState createState() => _AddProductState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _AddProductState extends State<AddProductScreen> {
   //Variables
   final _database = DatabaseService();
   final _formKey = GlobalKey<FormState>();

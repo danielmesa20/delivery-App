@@ -1,6 +1,6 @@
 import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
 import 'package:brew_crew/models/Product.dart';
-import 'package:brew_crew/screens/products/update_product.dart';
+import 'package:brew_crew/UI/products/update_product.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

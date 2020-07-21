@@ -9,14 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInWithEmail extends StatefulWidget {
+  //Variables
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  SignInWithEmail({
-    Key key,
-    @required GlobalKey<ScaffoldState> scaffoldKey,
-  })  : assert(scaffoldKey != null),
-        scaffoldKey = scaffoldKey,
-        super(key: key);
+  SignInWithEmail(this.scaffoldKey);
 
   @override
   _SignInWithEmailState createState() => _SignInWithEmailState();
@@ -98,7 +94,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                     SizedBox(height: 20.0),
                     CustomTitle(
                       size: width * 1.15,
-                      text: "SIGN IN WITH EMAIL",
+                      text: "SignIn",
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(

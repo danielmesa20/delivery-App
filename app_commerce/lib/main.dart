@@ -1,7 +1,6 @@
 import 'package:brew_crew/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:brew_crew/screens/authenticate/tab_auth.dart';
-import 'package:brew_crew/screens/home/home.dart';
-import 'package:brew_crew/services/auth.dart';
+import 'package:brew_crew/UI/authenticate/tab_auth.dart';
+import 'package:brew_crew/UI/home/home.dart';
 import 'package:brew_crew/shared/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,24 +8,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  //AuthService Instance
-  final AuthService auth = AuthService();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {
       runApp(
         BlocProvider(
-          create: (context) =>
-              AuthenticationBloc(auth: auth)..add(AppStarted()),
-          child: MyApp(),
+          create: (context) => AuthenticationBloc()..add(AppStarted()),
+          child: RootApp(),
         ),
       );
     },
   );
 }
 
-class MyApp extends StatelessWidget {
-  // Root Application.
-
+class RootApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

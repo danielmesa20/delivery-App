@@ -24,7 +24,7 @@ InputDecoration inputDecoration(String text, [IconData icon, String textHelper])
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Colors.pink,
+        color: Color.fromRGBO(0, 168, 150, 1),
         width: 2.0,
       ),
     ),

@@ -1,8 +1,10 @@
+import 'package:brew_crew/UI/chat/LoginScreen.dart';
+import 'package:brew_crew/blocs/addProduct/bloc/addproduct_bloc.dart';
 import 'package:brew_crew/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:brew_crew/blocs/chat/bloc/chat_bloc.dart';
 import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
-import 'package:brew_crew/screens/products/add_product.dart';
-import 'package:brew_crew/screens/products/list_products.dart';
-import 'package:brew_crew/screens/profile/profileData.dart';
+import 'package:brew_crew/UI/products/list_products.dart';
+import 'package:brew_crew/UI/profile/profileData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +19,7 @@ class _HomeState extends State<Home> {
   //Screen options
   final List<Widget> _pageOptions = <Widget>[
     ListProducts(),
-    AddProduct(),
+    LoginScreen(),
     ProfileData(),
   ];
 
@@ -57,9 +59,12 @@ class _HomeState extends State<Home> {
           BlocProvider(
             create: (context) => ListproductsBloc()..add(LoadProducts()),
           ),
-          /*BlocProvider(
+          BlocProvider(
             create: (context) => AddproductBloc(),
-          ),*/
+          ),
+           BlocProvider(
+            create: (context) => ChatBloc()..add(LoadChats()),
+          ),
         ],
         child: _pageOptions[_selectedPage],
       ),

@@ -10,20 +10,16 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthService _auth;
+  AuthenticationBloc() : super(Uninitialized());
 
-  AuthenticationBloc({@required AuthService auth})
-      : assert(auth != null),
-        _auth = auth,
-        super(Uninitialized());
-        
   @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
+    final AuthService _auth = AuthService();
     if (event is AppStarted) {
-      final bool result = await _auth.isSignedIn();
-      if (result) {
+      final bool isSignedIn = await _auth.isSignedIn();
+      if (isSignedIn) {
         yield Authenticated();
       } else {
         yield Unauthenticated();

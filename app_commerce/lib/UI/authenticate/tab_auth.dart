@@ -1,7 +1,7 @@
 import 'package:brew_crew/blocs/login/bloc/login_bloc.dart';
 import 'package:brew_crew/blocs/register/bloc/register_bloc.dart';
-import 'package:brew_crew/screens/authenticate/register.dart';
-import 'package:brew_crew/screens/authenticate/sign_in_email.dart';
+import 'package:brew_crew/UI/authenticate/register.dart';
+import 'package:brew_crew/UI/authenticate/sign_in_email.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,12 +18,8 @@ class _TabAuthState extends State<TabAuth> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => LoginBloc(),
-        ),
-        BlocProvider(
-          create: (_) => RegisterBloc(),
-        )
+        BlocProvider(create: (_) => LoginBloc()),
+        BlocProvider(create: (_) => RegisterBloc())
       ],
       child: SafeArea(
         child: DefaultTabController(
@@ -61,7 +57,7 @@ class _TabAuthState extends State<TabAuth> {
             ),
             body: TabBarView(
               children: [
-                SignInWithEmail(scaffoldKey: _scaffoldKey),
+                SignInWithEmail(_scaffoldKey),
                 Register(_scaffoldKey),
               ],
             ),

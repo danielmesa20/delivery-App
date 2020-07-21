@@ -1,4 +1,5 @@
 const Commerce = require("../models/Commerce");
+const Chat = require("../models/Chat");
 const Cloudinary = require("../config/cloudinary");
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
@@ -16,16 +17,29 @@ exports.signUpCommerce = async (req, res) => {
 
         if (!commerce) {
 
+            /*//Token activate
+            const token = jwt.sign({ id: commerce._id },
+                process.env.SECRET, {
+                expiresIn: '20m'
+            });
+
             //Verify email
             const data = {
-                from: '"Excited User" <noreply@hello.com>',
+                from: 'noreply@hello.com',
                 to: email,
-                subject: 'Hello',
-                text: 'Testing some Mailgun awesomness!'
+                subject: 'Account Activation Link',
+                html: `
+                <h2>Please click on given link to reset your passoword</h2>
+                <p>${process.env.CLIENT_URL}/commerce/activate/${token}</p>
+                `
             };
+
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                if(error){
+                    return res.status(400).json({ err: err.message });
+                }
             });
+            */
 
             //Upload image to Cloudinary
             const result = await Cloudinary.v2.uploader.upload(req.file.path);
@@ -153,3 +167,13 @@ exports.resetPasswordCommerce = async (req, res) => {
         return res.status(400).json({ err });
     }
 }
+
+//Get commerce products
+exports.commerceChats = async (req, res) => {
+    try {
+        const chats = await Chat.find({ commerceID: req.params.id });
+        return res.status(200).json({ err: null, chats });
+    } catch (err) {
+        return res.status(400).json({ err });
+    }
+};

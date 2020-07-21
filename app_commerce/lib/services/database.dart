@@ -80,7 +80,6 @@ class DatabaseService {
         return data;
 
       } catch (e) {
-        print("err api");
         return {'err': 'Api dont response'};
       }
     } else {
@@ -189,4 +188,41 @@ class DatabaseService {
       return {'err': 'Check your connection'};
     }
   }
+
+//Get Commerce Products
+  Future getChats() async {
+    //Get id commerce
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    //Send id commerce
+    String id = sharedPreferences.getString("commerce_id");
+
+    //API URL
+    String url = "$local/commerce/commerceChats/$id";
+
+    //Check Internet Connection
+    bool hasConnection = await DataConnectionChecker().hasConnection;
+
+    if (hasConnection) {
+      try {
+        //API response
+        var response = await http.get(url);
+
+        //JSON to Map
+        var data = jsonDecode(response.body);
+
+        //Return result
+        return data;
+
+      } catch (e) {
+        return {'err': 'Api dont response'};
+      }
+    } else {
+      //Return error
+      return {'err': 'Check your internet connection.'};
+    }
+  }
+
+
+
 }

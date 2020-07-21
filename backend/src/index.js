@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV !== 'production'){
+if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
@@ -13,11 +13,14 @@ app.set("port", process.env.PORT || 3000);
 //Server
 async function main(){
   try{
-    app.listen(app.get('port'));
-    console.log('server on port', app.get('port'));
+    const server = app.listen(app.get('port'), () => {
+      console.log('Listening on port', app.get('port'));
+    });
   }catch(e){
     console.log('Error al iniciar el servidor');
   }
 }
 
+//Run Server
 main();
+

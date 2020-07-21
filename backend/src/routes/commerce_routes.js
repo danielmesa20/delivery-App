@@ -11,6 +11,9 @@ router.post('/signupcommerce', commerceController.signUpCommerce);
 //Get commerce data
 router.get('/commerceData/:id', commerceController.commerceData);
 
+//GEt comemrce chats
+router.get('/commerceChats/:id', commerceController.commerceChats);
+
 //Reset password
 router.put('/resetPasswordCommerce', commerceController.resetPasswordCommerce);
 

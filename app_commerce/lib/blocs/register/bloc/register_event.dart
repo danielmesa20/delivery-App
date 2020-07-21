@@ -30,3 +30,8 @@ class ChangeListOptionsEvent extends RegisterEvent {
   @override
   List<Object> get props => [country];
 }
+
+class ResetState extends RegisterEvent {
+  @override
+  List<Object> get props => [];
+}

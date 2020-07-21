@@ -2,9 +2,9 @@
   "name": "api-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon --exec babel-node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --exec babel-node src/app.js",
     "start": "cross-env NODE_ENV=production node src/index.js"
   },
   "keywords": [],
@@ -26,9 +26,11 @@
     "express": "^4.17.1",
     "fs-extra": "^9.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mailgun-js": "^0.22.0",
     "mongoose": "^5.9.10",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "socket.io": "^2.3.0",
     "uuid": "^8.1.0"
   }
 }

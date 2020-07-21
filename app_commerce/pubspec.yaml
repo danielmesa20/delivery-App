@@ -33,7 +33,8 @@ dependencies:
   flutter_material_pickers: ^1.6.0
   flutter_bloc: ^5.0.1
   equatable: ^1.2.2
-
+  adhara_socket_io: ^0.4.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

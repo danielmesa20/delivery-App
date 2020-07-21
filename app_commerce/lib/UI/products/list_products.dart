@@ -1,7 +1,7 @@
 import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
-import 'package:brew_crew/screens/products/add_product.dart';
-import 'package:brew_crew/screens/products/empty_list_products.dart';
-import 'package:brew_crew/screens/products/product_tile.dart';
+import 'package:brew_crew/UI/products/add_product.dart';
+import 'package:brew_crew/UI/products/empty_list_products.dart';
+import 'package:brew_crew/UI/products/product_tile.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:brew_crew/shared/Loading.dart';
@@ -40,12 +40,7 @@ class _ListProductsState extends State<ListProducts> {
                     'Delete Product Completed.', Colors.green[700]));
                 //Reload list of products
                 BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
-              } else if (state is FailedState) {
-                //Reload list of products
-                BlocProvider.of<ListproductsBloc>(context).add(LoadProducts());
-                _scaffoldKey.currentState
-                    .showSnackBar(showSnackBar(state.error, Colors.green[700]));
-              }
+              } 
             },
             child: BlocBuilder<ListproductsBloc, ListproductsState>(
               builder: (context, state) {
@@ -140,7 +135,7 @@ class _ListProductsState extends State<ListProducts> {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddProduct(),
+              builder: (context) => AddProductScreen(),
             ),
           );
           if (result != null) {
