@@ -5,10 +5,10 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  //local url
+//local url
   String local = 'http://192.168.250.5:4000';
 
-  // SignUp
+// SignUp
   Future signUp(Map commerce) async {
     //URL API
     var url = Uri.parse('$local/commerce/signupcommerce');
@@ -49,7 +49,7 @@ class AuthService {
     }
   }
 
-  // Sign in with email & password
+// SignIn
   Future signIn(String email, String password) async {
     //Commerce credentials
     Map credentials = {'email': email, 'password': password};
@@ -86,12 +86,33 @@ class AuthService {
     }
   }
 
-  // Password reset
-  Future resetPassword(String email) async {
-    
+// SignIn
+  Future checkEmail(String email) async {
+    //Commerce credentials
+    Map credentials = {'email': email};
+
+    //API URL
+    String url = "$local/commerce/checkemail";
+
+    //Check Internet Connection
+    bool hasConnection = await DataConnectionChecker().hasConnection;
+
+    if (hasConnection) {
+      //API response
+      var response = await http.post(url, body: credentials);
+
+      //JSON to Map
+      var data = jsonDecode(response.body);
+
+      //Return data
+      return data;
+      
+    } else {
+      return {'err': 'Check your connection'};
+    }
   }
 
-  // Sign out
+// SignOut / Logout
   Future signOut() async {
     //Get token auth
     SharedPreferences sharedPreferences;
@@ -99,7 +120,7 @@ class AuthService {
     sharedPreferences.clear();
   }
 
-  //Check  user is signed in
+//Check  user is signed in
   Future isSignedIn() async {
      //Get token auth
     SharedPreferences sharedPreferences;

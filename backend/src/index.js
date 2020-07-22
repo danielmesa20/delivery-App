@@ -8,12 +8,12 @@ const app = require('./app');
 require('./database');
 
 //PORT
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 4000);
 
 //Server
 async function main(){
   try{
-    const server = app.listen(app.get('port'), () => {
+    app.listen(app.get('port'), () => {
       console.log('Listening on port', app.get('port'));
     });
   }catch(e){

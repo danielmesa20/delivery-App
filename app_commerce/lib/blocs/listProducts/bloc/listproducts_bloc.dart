@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:brew_crew/models/Product.dart';
+import 'package:brew_crew/Models/Product.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -24,9 +24,10 @@ class ListproductsBloc extends Bloc<ListproductsEvent, ListproductsState> {
       //Recived result Api
       dynamic result = await _database.getProducts();
       if (result['err'] == null) {
-        final List<dynamic> _products =
-            result['products'].map((model) => Product.fromJson(model)).toList();
-        if (_products.length > 0) {
+        if (result['products'].length > 0) {
+          final List<dynamic> _products = result['products']
+              .map((model) => Product.fromJson(model))
+              .toList();
           yield SuccessLoad(products: _products);
         } else {
           yield EmptyList();

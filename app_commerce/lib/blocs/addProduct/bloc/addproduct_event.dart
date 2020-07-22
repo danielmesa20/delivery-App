@@ -8,9 +8,17 @@ abstract class AddproductEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddProduct extends AddproductEvent {
+class AddProductEvent extends AddproductEvent {
   final Map data;
-  AddProduct({ @required this.data});
+  AddProductEvent({@required this.data});
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ValidateFieldsEvent extends AddproductEvent {
+  final Map data;
+  ValidateFieldsEvent({@required this.data});
 
   @override
   List<Object> get props => [data];

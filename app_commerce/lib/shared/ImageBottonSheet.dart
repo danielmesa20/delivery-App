@@ -19,6 +19,7 @@ class _ImageBottonSheetState extends State<ImageBottonSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            SizedBox(height: 10),
             Text(
               'Select option',
               textAlign: TextAlign.center,
@@ -142,9 +143,10 @@ class _ImageBottonSheetState extends State<ImageBottonSheet> {
                       style: TextStyle(color: Colors.white),
                     )
                   ],
-                )
+                ),
               ],
             ),
+            SizedBox(height: 20)
           ],
         ),
       ),

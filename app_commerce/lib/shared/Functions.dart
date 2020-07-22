@@ -44,9 +44,7 @@ void onLoading(context) {
                 CircularProgressIndicator(
                   backgroundColor: Color.fromRGBO(0, 168, 150, 1),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Text(
                   "Please Wait....",
                   style: TextStyle(

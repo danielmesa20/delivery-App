@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:brew_crew/Data/select_data.dart';
 import 'package:brew_crew/services/auth.dart';
 import 'package:brew_crew/shared/Functions.dart';
 import 'package:equatable/equatable.dart';
@@ -20,36 +19,35 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (event is DoRegisterEvent) {
       //Show Loading Dialog
       yield LoadingState();
-      Map data = event.commerceData;
       final _auth = AuthService();
       //API result
-      var result = await _auth.signUp(data);
+      var result = await _auth.signUp(event.commerceData);
       if (result['err'] != null) {
-        yield RegisterFailed(error: result['err']);
+        yield ErrorBlocState(error: result['err'], hide: true);
       } else {
         yield RegisterSuccess();
+      }
+    } else if (event is CheckEmailEvent) {
+      //Show Loading Dialog
+      yield LoadingState();
+      final _auth = AuthService();
+      //API result
+      var result = await _auth.checkEmail(event.email);
+      if (result['err'] == null) {
+        yield EmailValidated();
+      } else {
+        yield ErrorBlocState(error: result['err'], hide: true);
       }
     } else if (event is ValidateEvent) {
       Map data = event.commerceData;
       String error = validate(data);
       if (error != null) {
-        yield ErrorBlocState(error: error);
+        yield ErrorBlocState(error: error, hide: false);
       } else {
         yield ValidateFieldsCompleted();
       }
-    } else if (event is ChangeListOptionsEvent) {
-      if (event.country == 'Venezuela') {
-        yield ChangeListOptinonsState(
-          options: listStatesVenezuela,
-        );
-      } else {
-        yield ChangeListOptinonsState(
-          options: listStatesColombia,
-        );
-      }
-    } else if (event is ResetState) {
-      yield RegisterInitial();
-    }
+    } 
+    yield RegisterInitial();
   }
 
   String validate(Map data) {
@@ -58,9 +56,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (data['email'].length == 0 ||
         data['password'].length == 0 ||
         data['name'].length == 0 ||
-        data['category'].length == 0 ||
-        data['country'].length == 0 ||
-        data['state'].length == 0) {
+        data['category'].length == 0) {
       error = 'You must enter all the fields.';
     } else if (!validateEmail(data['email'])) {
       error = 'Enter an valid email.';

@@ -1,8 +1,5 @@
-import 'package:brew_crew/UI/chat/LoginScreen.dart';
-import 'package:brew_crew/blocs/addProduct/bloc/addproduct_bloc.dart';
+import 'package:brew_crew/UI/authenticate/pick_location.dart';
 import 'package:brew_crew/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:brew_crew/blocs/chat/bloc/chat_bloc.dart';
-import 'package:brew_crew/blocs/listProducts/bloc/listproducts_bloc.dart';
 import 'package:brew_crew/UI/products/list_products.dart';
 import 'package:brew_crew/UI/profile/profileData.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +15,8 @@ class _HomeState extends State<Home> {
   int _selectedPage = 0;
   //Screen options
   final List<Widget> _pageOptions = <Widget>[
-    ListProducts(),
-    LoginScreen(),
+    ListProductsProvider(),
+    PickLocationScreen(),
     ProfileData(),
   ];
 
@@ -54,20 +51,7 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => ListproductsBloc()..add(LoadProducts()),
-          ),
-          BlocProvider(
-            create: (context) => AddproductBloc(),
-          ),
-           BlocProvider(
-            create: (context) => ChatBloc()..add(LoadChats()),
-          ),
-        ],
-        child: _pageOptions[_selectedPage],
-      ),
+      body: _pageOptions[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.white,

@@ -15,6 +15,16 @@ class DoLoginEvent extends LoginEvent {
   List<Object> get props => [email, password];
 }
 
+class ValidatedFields extends LoginEvent {
+  final String email;
+  final String password;
+
+  ValidatedFields({ @required this.email,  @required this.password});
+
+  @override
+  List<Object> get props => [email, password];
+}
+
 class ResetPasswordEvent extends LoginEvent {
   final String email;
 

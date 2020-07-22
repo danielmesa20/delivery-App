@@ -19,27 +19,13 @@ class ValidateFieldsCompleted extends RegisterState {}
 //Register success
 class RegisterSuccess extends RegisterState {}
 
-//Register failed
-class RegisterFailed extends RegisterState {
-  final String error;
-  RegisterFailed({@required this.error});
-  @override
-  List<Object> get props => [error];
-}
-
-//ChangeList
-class ChangeListOptinonsState extends RegisterState {
-  final List<String> options;
-  ChangeListOptinonsState({@required this.options});
-  @override
-  List<Object> get props => [options];
-}
+class EmailValidated extends RegisterState {}
 
 //Error
 class ErrorBlocState extends RegisterState {
   final String error;
-  ErrorBlocState({@required this.error});
+  final bool hide;
+  ErrorBlocState({@required this.error, @required this.hide});
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [error, hide];
 }
-

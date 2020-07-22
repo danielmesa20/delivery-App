@@ -1,10 +1,7 @@
 const Commerce = require("../models/Commerce");
-const Chat = require("../models/Chat");
 const Cloudinary = require("../config/cloudinary");
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
-const mailgun = require("mailgun-js");
-const mg = mailgun({apiKey: process.env.MAIL_GUN_APIKEY, domain: process.env.DOMAIN_MAIL_GUN});
 
 //SignUp Commerce
 exports.signUpCommerce = async (req, res) => {
@@ -16,30 +13,6 @@ exports.signUpCommerce = async (req, res) => {
         const commerce = await Commerce.findOne({ email }).select('_id');
 
         if (!commerce) {
-
-            /*//Token activate
-            const token = jwt.sign({ id: commerce._id },
-                process.env.SECRET, {
-                expiresIn: '20m'
-            });
-
-            //Verify email
-            const data = {
-                from: 'noreply@hello.com',
-                to: email,
-                subject: 'Account Activation Link',
-                html: `
-                <h2>Please click on given link to reset your passoword</h2>
-                <p>${process.env.CLIENT_URL}/commerce/activate/${token}</p>
-                `
-            };
-
-            mg.messages().send(data, function (error, body) {
-                if(error){
-                    return res.status(400).json({ err: err.message });
-                }
-            });
-            */
 
             //Upload image to Cloudinary
             const result = await Cloudinary.v2.uploader.upload(req.file.path);
@@ -109,6 +82,26 @@ exports.signInCommerce = async (req, res) => {
     }
 };
 
+exports.checkEmail = async (req, res) => {
+    //User credentials
+    const { email } = req.body;
+    try {
+        //Find if exist that email
+        const commerce = await Commerce.findOne({ email }).select('_id');
+
+        //Exist email
+        if (commerce) {
+            return res.status(200).json({ err: 'Email already used' });
+        }
+
+        //Dont exist email
+        return res.status(200).json({ err: null });
+
+    } catch (err) {
+        return res.status(400).json({ err });
+    }
+}
+
 //Get commerce data
 exports.commerceData = async (req, res) => {
     try {
@@ -124,56 +117,3 @@ exports.commerceData = async (req, res) => {
     }
 }
 
-//Reset password commerce
-exports.resetPasswordCommerce = async (req, res) => {
-    const { email } = req.body;
-    try {
-        //Find if exist that email
-        const commerce = await Commerce.findOne({ email });
-
-        //Exist email
-        if (commerce) {
-
-            const token = jwt.sign({ id: commerce._id },
-                process.env.RESET_PASSWORD_KEY, {
-                expiresIn: '24h'
-            });
-
-            const data = {
-                from: 'noreply@hello.com',
-                to: email,
-                subject: 'Account Activation Link',
-                html: `
-                <h2>Please click on given link to reset your passoword</h2>
-                <p>${process.env.CLIENT_URL}/authentication/resetpassword/${token}</p>
-                `
-            };
-
-            return res.status(200).json({
-                err: null,
-                token,
-                id: commerce._id,
-                name: commerce.name,
-                email: commerce.email
-            });
-
-        }
-
-        //Dont exist email
-        return res.status(400).json({ err: 'Unregistered email' });
-
-    } catch (err) {
-        console.log("Error reset: ", err);
-        return res.status(400).json({ err });
-    }
-}
-
-//Get commerce products
-exports.commerceChats = async (req, res) => {
-    try {
-        const chats = await Chat.find({ commerceID: req.params.id });
-        return res.status(200).json({ err: null, chats });
-    } catch (err) {
-        return res.status(400).json({ err });
-    }
-};

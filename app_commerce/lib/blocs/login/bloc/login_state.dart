@@ -3,43 +3,41 @@ part of 'login_bloc.dart';
 @immutable
 abstract class LoginState extends Equatable {
   const LoginState();
-}
-
-class LoginInitial extends LoginState {
   @override
   List<Object> get props => [];
 }
+
+//Initial State
+class LoginInitial extends LoginState {}
 
 //Loading state
-class LoadingState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
+class LoadingState extends LoginState {}
 
 //Login Success
-class LoggedInBLocState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-//Login Failed
-class LoginFailed extends LoginState {
-  final String error;
-  LoginFailed({@required this.error});
-  @override
-  List<Object> get props => [error];
-}
+class LoggedInBLocState extends LoginState {}
 
 //Reset password success
-class ResetPasswordSuccess extends LoginState {
+class ResetPasswordSuccess extends LoginState {}
+
+//Validate Fields Success
+class ValidatedFieldsSuccess extends LoginState {}
+
+//Change password visibility
+class ChangePasswordVisibility extends LoginState{
+  final bool hide;
+  ChangePasswordVisibility({ @required this.hide});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [hide];
 }
 
-//Error
+//Error State
 class ErrorBlocState extends LoginState {
   final String error;
-  ErrorBlocState({@required this.error});
+  final bool hide;
+  ErrorBlocState({
+    @required this.error,
+    @required this.hide,
+  });
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [error, hide];
 }

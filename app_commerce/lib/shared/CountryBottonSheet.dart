@@ -19,6 +19,7 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(height: 10),
             Text(
               'Select Country Location',
               textAlign: TextAlign.center,
@@ -40,7 +41,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/argentina.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/argentina.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Argentina'),
                         ),
@@ -62,7 +64,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/chile.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/chile.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Chile'),
                         ),
@@ -84,7 +87,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/colombia.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/colombia.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Colombia'),
                         ),
@@ -112,7 +116,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/ecuador.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/ecuador.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Ecuador'),
                         ),
@@ -134,7 +139,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/peru.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/peru.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Perú'),
                         ),
@@ -156,7 +162,8 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                           splashColor: Colors.red,
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: AssetImage("assets/venezuela.png"),
+                            backgroundImage:
+                                AssetImage("assets/flags/venezuela.png"),
                           ),
                           onTap: () => Navigator.pop(context, 'Venezuela'),
                         ),
@@ -171,6 +178,7 @@ class _CountryBottonSheetState extends State<CountryBottonSheet> {
                 ),
               ],
             ),
+            SizedBox(height: 20)
           ],
         ),
       ),

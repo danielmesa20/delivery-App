@@ -22,16 +22,9 @@ class DoRegisterEvent extends RegisterEvent {
   List<Object> get props => [commerceData];
 }
 
-//Change options
-class ChangeListOptionsEvent extends RegisterEvent {
-  final String country;
-
-  ChangeListOptionsEvent({this.country});
+class CheckEmailEvent extends RegisterEvent {
+  final String email;
+  CheckEmailEvent({this.email});
   @override
-  List<Object> get props => [country];
-}
-
-class ResetState extends RegisterEvent {
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [email];
 }

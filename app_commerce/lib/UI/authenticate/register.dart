@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:brew_crew/Data/select_data.dart';
+import 'package:brew_crew/UI/authenticate/pick_location.dart';
 import 'package:brew_crew/blocs/register/bloc/register_bloc.dart';
-import 'package:brew_crew/shared/CountryBottonSheet.dart';
-import 'package:brew_crew/shared/CustomAlertDialog.dart';
 import 'package:brew_crew/shared/CustomButton.dart';
 import 'package:brew_crew/shared/CustomCircleAvatar.dart';
 import 'package:brew_crew/shared/CustomTitle.dart';
@@ -15,7 +14,7 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 
 class Register extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
-  Register(this.scaffoldKey);
+  Register({@required this.scaffoldKey});
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -23,48 +22,12 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   //Variables
   bool _hidden = true;
-  String _category = '', _country = '', _state = '';
+  String _category = '';
   TextEditingController _emailC = TextEditingController();
   TextEditingController _passwordC = TextEditingController();
   TextEditingController _nameC = TextEditingController();
   List<String> _categories = listCategories;
-  List<String> _states = listStatesColombia;
   File _image;
-
-  //Commerce Data
-  Map commerceData() {
-    Map commerce = {
-      'email': _emailC.text,
-      'password': _passwordC.text,
-      'category': _category,
-      'country': _country,
-      'state': _state,
-      'name': _nameC.text,
-      'image': _image,
-    };
-    return commerce;
-  }
-
-  //Confirm message
-  void confirmMessage() async {
-    //Confirm message
-    final result = await showDialog<int>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-            text: 'Are you sure you want to register ' + 'with these data?');
-      },
-    );
-    //Answer yes in the AlertDialog
-    if (result == 1) {
-      BlocProvider.of<RegisterBloc>(context).add(
-        DoRegisterEvent(commerceData: commerceData()),
-      );
-    } else {
-      BlocProvider.of<RegisterBloc>(context).add(ResetState());
-    }
-  }
 
   //Update image
   void updateImage(File img) => setState(() => _image = img);
@@ -82,7 +45,7 @@ class _RegisterState extends State<Register> {
       headerTextColor: Colors.white,
       onChanged: (value) => setState(
         () => {
-          if (item == '_category') _category = value else _state = value,
+          if (item == '_category') _category = value else null,
         },
       ),
     );
@@ -95,8 +58,6 @@ class _RegisterState extends State<Register> {
     _nameC.clear();
     setState(() {
       _category = '';
-      _country = '';
-      _state = '';
     });
   }
 
@@ -108,23 +69,25 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
-  void _showCountryPanel() async {
-    final result = await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      elevation: 0.0,
-      isDismissible: true,
-      builder: (context) {
-        return CountryBottonSheet();
-      },
+  void goToLocationScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PickLocationScreen(),
+      ),
     );
     if (result != null) {
-      setState(() => {
-            _country = result,
-            _state = '',
-          });
+      Map data = {
+        'email': _emailC.text,
+        'password': _passwordC.text,
+        'category': _category,
+        'name': _nameC.text,
+        'image': _image,
+        'country': result['country'],
+        'state': result['state']
+      };
       BlocProvider.of<RegisterBloc>(context)
-          .add(ChangeListOptionsEvent(country: result));
+          .add(DoRegisterEvent(commerceData: data));
     }
   }
 
@@ -135,39 +98,27 @@ class _RegisterState extends State<Register> {
         child: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
             if (state is ErrorBlocState) {
-              //Show Error message
+              if (state.hide) Navigator.pop(context);
               widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
                 state.error,
                 Colors.red,
               ));
             } else if (state is RegisterSuccess) {
-              //Pop Loading Dialog
               Navigator.pop(context);
-              //Clean Form fields
               clearForm();
-              //Show completed message
               widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
                 'Register completed.',
                 Colors.greenAccent[700],
               ));
-            } else if (state is ChangeListOptinonsState) {
-              setState(() => {
-                    _states = state.options,
-                    _state = '',
-                  });
             } else if (state is LoadingState) {
-              //Show Loading  Dialog
               onLoading(context);
-            } else if (state is RegisterFailed) {
-              //Pop Loading Dialog
-              Navigator.pop(context);
-              //Show Error message
-              widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
-                state.error,
-                Colors.red,
-              ));
             } else if (state is ValidateFieldsCompleted) {
-              confirmMessage();
+              BlocProvider.of<RegisterBloc>(context).add(
+                CheckEmailEvent(email: _emailC.text),
+              );
+            } else if (state is EmailValidated) {
+              Navigator.pop(context);
+              goToLocationScreen();
             }
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(
@@ -234,7 +185,10 @@ class _RegisterState extends State<Register> {
                         TextFormField(
                           controller: _nameC,
                           textAlignVertical: TextAlignVertical.top,
-                          decoration: inputDecoration('Name'),
+                          decoration: inputDecoration(
+                            'Name',
+                            Icons.account_circle,
+                          ),
                           style: TextStyle(
                             color: Colors.white,
                             letterSpacing: 1.25,
@@ -258,41 +212,20 @@ class _RegisterState extends State<Register> {
                         ),
                         SizedBox(height: 10.0),
                         CustomButton(
-                          actionOnpressed: () => _showCountryPanel(),
-                          backgroundColor: Color.fromRGBO(2, 89, 111, 100),
-                          text: _country.isEmpty
-                              ? "Select One Country"
-                              : "Selected: $_country",
-                          textColor: Colors.white,
-                          shapeColor: _country.isEmpty
-                              ? Colors.redAccent[700]
-                              : Colors.greenAccent[700],
-                        ),
-                        SizedBox(height: 10.0),
-                        CustomButton(
-                          actionOnpressed: () => showScrollPicker(
-                            "Select one State",
-                            _states,
-                            '_state',
-                          ),
-                          backgroundColor: Color.fromRGBO(2, 89, 111, 100),
-                          text: _state.isEmpty
-                              ? "Select One State"
-                              : "Selected: $_state",
-                          textColor: Colors.white,
-                          shapeColor: _state.isEmpty
-                              ? Colors.redAccent[700]
-                              : Colors.greenAccent[700],
-                        ),
-                        SizedBox(height: 10.0),
-                        CustomButton(
                           backgroundColor: Color.fromRGBO(0, 168, 150, 1),
-                          text: "Enter",
+                          text: "Continue",
                           textColor: Colors.white,
                           actionOnpressed: () {
+                            Map commerce = {
+                              'email': _emailC.text,
+                              'password': _passwordC.text,
+                              'category': _category,
+                              'name': _nameC.text,
+                              'image': _image,
+                            };
                             //Validate event
                             BlocProvider.of<RegisterBloc>(context).add(
-                              ValidateEvent(commerceData: commerceData()),
+                              ValidateEvent(commerceData: commerce),
                             );
                           },
                         ),

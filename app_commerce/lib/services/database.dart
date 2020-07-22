@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:brew_crew/Models/Product.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -78,7 +79,6 @@ class DatabaseService {
 
         //Return result
         return data;
-
       } catch (e) {
         return {'err': 'Api dont response'};
       }
@@ -139,7 +139,7 @@ class DatabaseService {
     }
   }
 
-  //Delete Product
+//Delete Product
   Future deleteProduct(String id) async {
     //API URL
     String url = "$local/products/delete/$id";
@@ -161,7 +161,7 @@ class DatabaseService {
     }
   }
 
-  //Get Commerce data
+//Get Commerce data
   Future getCommerceData() async {
     //Get id commerce
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -213,7 +213,6 @@ class DatabaseService {
 
         //Return result
         return data;
-
       } catch (e) {
         return {'err': 'Api dont response'};
       }
@@ -223,6 +222,35 @@ class DatabaseService {
     }
   }
 
+  Stream<List<Product>> streamProducts() async* {
+    //Get id commerce
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
+    //Send id commerce
+    String id = sharedPreferences.getString("commerce_id");
 
+    //API URL
+    String url = "$local/products/commerceProducts/$id";
+
+    //Check Internet Connection
+    bool hasConnection = await DataConnectionChecker().hasConnection;
+
+    if (hasConnection) {
+      try {
+        //API response
+        var response = await http.get(url);
+
+        //JSON to Map
+        var data = jsonDecode(response.body);
+        
+        //Return result
+        yield data['products'].map((model) => Product.fromJson(model)).toList();
+      } catch (e) {
+        yield null;
+      }
+    } else {
+      //Return error
+      yield null;
+    }
+  }
 }

@@ -12,7 +12,7 @@ class SignInWithEmail extends StatefulWidget {
   //Variables
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  SignInWithEmail(this.scaffoldKey);
+  SignInWithEmail({@required this.scaffoldKey});
 
   @override
   _SignInWithEmailState createState() => _SignInWithEmailState();
@@ -21,30 +21,9 @@ class SignInWithEmail extends StatefulWidget {
 class _SignInWithEmailState extends State<SignInWithEmail> {
   //Variables
   bool _hidden = true;
-  TextEditingController _emailC = new TextEditingController();
-  TextEditingController _passwordC = new TextEditingController();
+  TextEditingController _emailC = TextEditingController();
+  TextEditingController _passwordC = TextEditingController();
 
-  void validateFields() {
-    String error = '';
-    if (_emailC.text.length == 0 || _passwordC.text.length == 0) {
-      error = 'You must enter all the fields.';
-    } else if (!validateEmail(_emailC.text)) {
-      error = 'Enter an valid email.';
-    }
-    if (error.length == 0) {
-      BlocProvider.of<LoginBloc>(context).add(DoLoginEvent(
-        email: _emailC.text,
-        password: _passwordC.text,
-      ));
-    } else {
-      widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
-        error,
-        Colors.red,
-      ));
-    }
-  }
-
-  // Clean controllers
   void dispose() {
     _emailC.dispose();
     _passwordC.dispose();
@@ -58,27 +37,24 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoadingState) {
-              //Show Loading  Dialog
               onLoading(context);
             } else if (state is LoggedInBLocState) {
-              //Pop Loading Dialog
               Navigator.pop(context);
-              //Update AuthenticationBloc State
               BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-              //changeScreen(context, Home());
             } else if (state is ResetPasswordSuccess) {
               widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
                   'This function has not been implemented',
                   Colors.yellow[700]));
-            } else if (state is LoginFailed) {
-              //Pop Loading Dialog
-              Navigator.pop(context);
-              //Show Error message
-              widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
-                state.error,
-                Colors.red,
+            } else if (state is ValidatedFieldsSuccess) {
+              BlocProvider.of<LoginBloc>(context).add(DoLoginEvent(
+                email: _emailC.text,
+                password: _passwordC.text,
               ));
-            }
+            } else if (state is ErrorBlocState) {
+              if (state.hide) Navigator.pop(context);
+              widget.scaffoldKey.currentState
+                  .showSnackBar(showSnackBar(state.error, Colors.red));
+            } 
           },
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -115,10 +91,8 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                         color: Colors.white,
                         letterSpacing: 1.25,
                       ),
-                      decoration: inputDecoration(
-                        'Password',
-                        Icons.security,
-                      ).copyWith(
+                      decoration:
+                          inputDecoration('Password', Icons.security).copyWith(
                         suffixIcon: IconButton(
                           icon: Icon(
                             _hidden == true
@@ -137,7 +111,10 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                       text: "Enter",
                       textColor: Colors.white,
                       actionOnpressed: () {
-                        validateFields();
+                        BlocProvider.of<LoginBloc>(context).add(ValidatedFields(
+                          email: _emailC.text,
+                          password: _passwordC.text,
+                        ));
                       },
                     ),
                     CustomButton(
@@ -151,8 +128,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                             email: _emailC.text,
                           ));
                         } else {
-                          widget.scaffoldKey.currentState
-                              .showSnackBar(showSnackBar(
+                          widget.scaffoldKey.currentState.showSnackBar(showSnackBar(
                             'Please supply a valid email.',
                             Colors.red,
                           ));

@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:brew_crew/models/Product.dart';
+import 'package:brew_crew/Data/messages.dart';
+import 'package:brew_crew/Models/Product.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
@@ -174,7 +175,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                         TextFormField(
                           keyboardType: TextInputType.number,
                           controller: _priceC,
-                          maxLength: 4,
+                          maxLength: 6,
                           textAlignVertical: TextAlignVertical.top,
                           decoration: inputDecoration('Price'),
                           style: TextStyle(
@@ -225,8 +226,8 @@ class _UpdateProductState extends State<UpdateProduct> {
                                 barrierDismissible: false,
                                 builder: (BuildContext context) {
                                   return CustomAlertDialog(
-                                      text: 'Are you sure you want to update the' +
-                                          'product with those characteristics?');
+                                    text: CONFIRM_UPDATE_PRODUCT,
+                                  );
                                 },
                               );
                               //Answer yes in the AlertDialog

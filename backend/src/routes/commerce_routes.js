@@ -9,12 +9,9 @@ router.post('/signincommerce', commerceController.signInCommerce);
 router.post('/signupcommerce', commerceController.signUpCommerce);
 
 //Get commerce data
+router.post('/checkemail', commerceController.checkEmail);
+
+//Get commerce data
 router.get('/commerceData/:id', commerceController.commerceData);
-
-//GEt comemrce chats
-router.get('/commerceChats/:id', commerceController.commerceChats);
-
-//Reset password
-router.put('/resetPasswordCommerce', commerceController.resetPasswordCommerce);
 
 module.exports = router;

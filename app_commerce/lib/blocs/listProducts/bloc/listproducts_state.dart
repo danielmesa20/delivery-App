@@ -7,7 +7,10 @@ abstract class ListproductsState extends Equatable {
   List<Object> get props => [];
 }
 
-// Loading Products from API
+//Initial state
+class InitialState extends ListproductsState{}
+
+// Wait Loading 
 class LoadingProducts extends ListproductsState {}
 
 //Dont products

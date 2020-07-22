@@ -5,6 +5,7 @@ class Product {
   final String name;
   final String description;
   final double price;
+  final double rating;
   final bool available;
   final String imageURL;
   final String publicId;
@@ -17,6 +18,7 @@ class Product {
     this.description,
     this.price,
     this.available,
+    this.rating,
     this.imageURL,
     this.publicId,
     this.commerceId,
@@ -30,6 +32,7 @@ class Product {
       description: parsedJson['description'],
       price: double.parse(parsedJson['price']),
       available: parsedJson['available'],
+      rating: double.parse(parsedJson['rating']),
       imageURL: parsedJson['imageURL'],
       publicId: parsedJson['public_id'],
       commerceId: parsedJson['commerce_id'],

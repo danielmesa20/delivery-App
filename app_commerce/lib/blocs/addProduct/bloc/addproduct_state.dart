@@ -7,13 +7,19 @@ abstract class AddproductState extends Equatable {
   List<Object> get props => [];
 }
 
-class Loading extends AddproductState {}
+class InitialState extends AddproductState {}
 
-class SuccessAdd extends AddproductState {}
+class LoadingState extends AddproductState {}
 
-class FailedAdd extends AddproductState {
+class SuccessAddState extends AddproductState {}
+
+class SuccesValidateState extends AddproductState {}
+
+class AddProductErrorState extends AddproductState {
   final String error;
-  FailedAdd({@required this.error});
+  final bool hide;
+
+  AddProductErrorState({@required this.error, @required this.hide});
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [error, hide];
 }

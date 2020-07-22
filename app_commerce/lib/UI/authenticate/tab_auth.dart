@@ -5,14 +5,9 @@ import 'package:brew_crew/UI/authenticate/sign_in_email.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TabAuth extends StatefulWidget {
-  @override
-  _TabAuthState createState() => _TabAuthState();
-}
-
-class _TabAuthState extends State<TabAuth> {
+class TabAuth extends StatelessWidget {
   //Variables
-  var _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +18,6 @@ class _TabAuthState extends State<TabAuth> {
       ],
       child: SafeArea(
         child: DefaultTabController(
-          initialIndex: 0,
           length: 2,
           child: Scaffold(
             key: _scaffoldKey,
@@ -57,8 +51,8 @@ class _TabAuthState extends State<TabAuth> {
             ),
             body: TabBarView(
               children: [
-                SignInWithEmail(_scaffoldKey),
-                Register(_scaffoldKey),
+                SignInWithEmail(scaffoldKey: _scaffoldKey),
+                Register(scaffoldKey: _scaffoldKey),
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:brew_crew/models/Commerce.dart';
+import 'package:brew_crew/Models/Commerce.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:brew_crew/shared/Constants.dart';
 import 'package:brew_crew/shared/CustomAlertDialog.dart';
