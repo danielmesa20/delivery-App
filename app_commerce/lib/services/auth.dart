@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
 //local url
-  String local = 'http://192.168.250.5:4000';
+  String local = 'http://192.168.250.4:4000';
 
 // SignUp
   Future signUp(Map commerce) async {
@@ -88,6 +88,8 @@ class AuthService {
 
 // SignIn
   Future checkEmail(String email) async {
+    print("check email");
+
     //Commerce credentials
     Map credentials = {'email': email};
 
@@ -106,7 +108,6 @@ class AuthService {
 
       //Return data
       return data;
-      
     } else {
       return {'err': 'Check your connection'};
     }
@@ -122,7 +123,7 @@ class AuthService {
 
 //Check  user is signed in
   Future isSignedIn() async {
-     //Get token auth
+    //Get token auth
     SharedPreferences sharedPreferences;
     sharedPreferences = await SharedPreferences.getInstance();
     if (sharedPreferences.getString("token") == null) {

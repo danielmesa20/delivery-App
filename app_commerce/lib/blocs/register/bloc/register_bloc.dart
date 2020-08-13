@@ -11,6 +11,8 @@ part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(RegisterInitial());
+  //AuthService Object
+  final _auth = AuthService();
 
   @override
   Stream<RegisterState> mapEventToState(
@@ -19,7 +21,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (event is DoRegisterEvent) {
       //Show Loading Dialog
       yield LoadingState();
-      final _auth = AuthService();
+
       //API result
       var result = await _auth.signUp(event.commerceData);
       if (result['err'] != null) {
@@ -27,26 +29,23 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       } else {
         yield RegisterSuccess();
       }
-    } else if (event is CheckEmailEvent) {
-      //Show Loading Dialog
-      yield LoadingState();
-      final _auth = AuthService();
-      //API result
-      var result = await _auth.checkEmail(event.email);
-      if (result['err'] == null) {
-        yield EmailValidated();
-      } else {
-        yield ErrorBlocState(error: result['err'], hide: true);
-      }
     } else if (event is ValidateEvent) {
       Map data = event.commerceData;
       String error = validate(data);
       if (error != null) {
         yield ErrorBlocState(error: error, hide: false);
       } else {
-        yield ValidateFieldsCompleted();
+        //Show Loading Dialog
+        yield LoadingState();
+        //API result
+        var result = await _auth.checkEmail(data['email']);
+        if (result['err'] == null) {
+          yield EmailValidated();
+        } else {
+          yield ErrorBlocState(error: result['err'], hide: true);
+        }
       }
-    } 
+    }
     yield RegisterInitial();
   }
 

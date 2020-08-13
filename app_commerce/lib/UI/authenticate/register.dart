@@ -112,10 +112,6 @@ class _RegisterState extends State<Register> {
               ));
             } else if (state is LoadingState) {
               onLoading(context);
-            } else if (state is ValidateFieldsCompleted) {
-              BlocProvider.of<RegisterBloc>(context).add(
-                CheckEmailEvent(email: _emailC.text),
-              );
             } else if (state is EmailValidated) {
               Navigator.pop(context);
               goToLocationScreen();

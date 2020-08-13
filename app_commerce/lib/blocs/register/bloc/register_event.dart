@@ -21,10 +21,3 @@ class DoRegisterEvent extends RegisterEvent {
   @override
   List<Object> get props => [commerceData];
 }
-
-class CheckEmailEvent extends RegisterEvent {
-  final String email;
-  CheckEmailEvent({this.email});
-  @override
-  List<Object> get props => [email];
-}

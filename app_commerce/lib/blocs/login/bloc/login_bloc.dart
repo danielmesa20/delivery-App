@@ -30,7 +30,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (result['err'] == null) {
         yield LoggedInBLocState();
       } else {
-        yield ErrorBlocState(error: result['err'], hide: false);
+        yield ErrorBlocState(error: result['err'], hide: true);
       }
     } else if (event is ValidatedFields) {
       if (event.email.length == 0 || event.password.length == 0) {

@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
   //Local url
-  String local = 'http://192.168.250.5:4000';
+  String local = 'http://192.168.250.4:4000';
 
   //Add New Product
   Future addProduct(Map product) async {
@@ -242,7 +242,7 @@ class DatabaseService {
 
         //JSON to Map
         var data = jsonDecode(response.body);
-        
+
         //Return result
         yield data['products'].map((model) => Product.fromJson(model)).toList();
       } catch (e) {
