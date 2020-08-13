@@ -83,16 +83,16 @@ exports.signInCommerce = async (req, res) => {
 };
 
 exports.checkEmail = async (req, res) => {
-    //User credentials
-    const { email } = req.body;
     try {
+        //User credentials
+        const { email } = req.body;
+
         //Find if exist that email
         const commerce = await Commerce.findOne({ email }).select('_id');
 
-        //Exist email
-        if (commerce) {
+        //Exist emai
+        if (commerce)
             return res.status(200).json({ err: 'Email already used' });
-        }
 
         //Dont exist email
         return res.status(200).json({ err: null });

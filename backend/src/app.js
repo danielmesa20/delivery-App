@@ -39,15 +39,4 @@ app.use((req, res, next) => {
 app.use('/products', require('./routes/products_routes'));
 app.use('/commerce', require('./routes/commerce_routes'));
 
-//PORT
-app.set("port", process.env.PORT || 4000);
-
-try {
-    server.listen(app.get('port'), () => {
-        console.log('Listening on port', app.get('port'));
-    });
-} catch (e) {
-    console.log('Error to init the server');
-}
-
 module.exports = app;
